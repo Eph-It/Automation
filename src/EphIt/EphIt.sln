@@ -7,19 +7,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Server", "EphIt.Serve
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Blazor", "EphIt.Blazor\EphIt.Blazor.csproj", "{04361D03-DE6C-44D5-997C-A4CE50B34B88}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Db", "EphIt.Db\EphIt.Db.csproj", "{90E2B890-79CA-4968-81F4-83BFE250B41D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Db", "Classlibraries\EphIt.Db\EphIt.Db.csproj", "{90E2B890-79CA-4968-81F4-83BFE250B41D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Service", "EphIt.Service\EphIt.Service.csproj", "{8B125E33-97F7-4317-BF07-C827C5591AA8}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EphIt.SQL", "EphIt.SQL\EphIt.SQL.sqlproj", "{F731A260-5D69-4B90-9C61-8269DA68CD59}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.User", "EphIt.User\EphIt.User.csproj", "{8C1F9538-74BD-4593-8C3E-0321271ABE70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.User", "Classlibraries\EphIt.User\EphIt.User.csproj", "{8C1F9538-74BD-4593-8C3E-0321271ABE70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Authorization", "EphIt.Authorization\EphIt.Authorization.csproj", "{D25325F2-CDB0-4F1F-9F0E-834E4E9A3A58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Authorization", "Classlibraries\EphIt.Authorization\EphIt.Authorization.csproj", "{D25325F2-CDB0-4F1F-9F0E-834E4E9A3A58}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Classlibraries", "Classlibraries", "{33612611-DEB3-4683-8F22-405F063A1284}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EphIt.Script", "EphIt.Script\EphIt.Script.csproj", "{9B01D148-C466-483A-9848-9E58D892BE4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EphIt.Script", "Classlibraries\EphIt.Script\EphIt.Script.csproj", "{9B01D148-C466-483A-9848-9E58D892BE4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
