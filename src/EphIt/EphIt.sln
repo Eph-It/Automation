@@ -21,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Classlibraries", "Classlibr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EphIt.Script", "EphIt.Script\EphIt.Script.csproj", "{9B01D148-C466-483A-9848-9E58D892BE4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EphIt.Models", "EphIt.Models\EphIt.Models.csproj", "{023F3A01-DE51-48E8-A8C9-DFB7272EBBF9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,10 +61,6 @@ Global
 		{9B01D148-C466-483A-9848-9E58D892BE4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B01D148-C466-483A-9848-9E58D892BE4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B01D148-C466-483A-9848-9E58D892BE4A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{023F3A01-DE51-48E8-A8C9-DFB7272EBBF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{023F3A01-DE51-48E8-A8C9-DFB7272EBBF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{023F3A01-DE51-48E8-A8C9-DFB7272EBBF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{023F3A01-DE51-48E8-A8C9-DFB7272EBBF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,7 +70,6 @@ Global
 		{8C1F9538-74BD-4593-8C3E-0321271ABE70} = {33612611-DEB3-4683-8F22-405F063A1284}
 		{D25325F2-CDB0-4F1F-9F0E-834E4E9A3A58} = {33612611-DEB3-4683-8F22-405F063A1284}
 		{9B01D148-C466-483A-9848-9E58D892BE4A} = {33612611-DEB3-4683-8F22-405F063A1284}
-		{023F3A01-DE51-48E8-A8C9-DFB7272EBBF9} = {33612611-DEB3-4683-8F22-405F063A1284}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A86F4A4-A07E-4A97-BB90-2B5F7C3CDC0F}
