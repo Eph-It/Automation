@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[Job_Log]
+(
+	[Job_Log_Id] BIGINT NOT NULL PRIMARY KEY IDENTITY, 
+    [Job_UId] UNIQUEIDENTIFIER NOT NULL, 
+    [Message] NVARCHAR(MAX) NULL, 
+    [Stream] NVARCHAR(20) NOT NULL, 
+    [Log_Time] DATETIME NOT NULL, 
+    CONSTRAINT [FK_Job_Log_Job] FOREIGN KEY ([Job_UId]) REFERENCES [Job]([Job_UId])
+)
