@@ -1,5 +1,9 @@
 # Automation
 
+An automation project to allow organizations to write and track IT process automations.
+
+More documentation in the [Wiki](https://github.com/Eph-It/Automation/wiki)
+
 # Major Milestones
 
 |Name|Complete|
