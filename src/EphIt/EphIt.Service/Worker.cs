@@ -17,6 +17,27 @@ namespace EphIt.Service
             _logger = logger;
         }
 
+        public override Task StartAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Service Starting");
+            
+
+
+            return base.StartAsync(cancellationToken);
+        }
+
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Stopping Service");
+            await base.StopAsync(cancellationToken);
+        }
+
+        public override void Dispose()
+        {
+            _logger.LogInformation("Disposing Service");
+            base.Dispose();
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
