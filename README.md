@@ -4,21 +4,7 @@ An automation project to allow organizations to write and track IT process autom
 
 More documentation in the [Wiki](https://github.com/Eph-It/Automation/wiki)
 
-# Major Milestones
-
-|Name|Complete|
-|---|---|
-| &#9745; | Initial Creation |
-| &#9745; | RBAC Authorization |
-| &#9744; | Create script |
-| &#9744; | Run job |
-| &#9744; | Import modules |
-| &#9744; | Store variables |
-| &#9744; | Store credentials |
-| &#9744; | Create automations |
-| &#9744; | Create webhooks |
-| &#9744; | User interface |
-
+Tracking work through a [Pivotal Project](https://www.pivotaltracker.com/projects/2469644)
 
 # Major Components
 
