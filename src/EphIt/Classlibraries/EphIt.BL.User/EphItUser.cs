@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Security.Principal;
 
-namespace EphIt.User
+namespace EphIt.BL.User
 {
     public class EphItUser : IEphItUser
     {
@@ -30,9 +30,9 @@ namespace EphIt.User
                     .FirstOrDefault();
             return _user;
         }
-        private EphIt.Db.Models.User NewUser(short authType)
+        private Db.Models.User NewUser(short authType)
         {
-            var newUser = new EphIt.Db.Models.User();
+            var newUser = new Db.Models.User();
             newUser.AuthenticationId = authType;
             _db.Add(newUser);
             _db.SaveChanges();
@@ -44,14 +44,14 @@ namespace EphIt.User
             string uniqueId = user.User.ToString();
 
             var ephUser = GetUser(authType, uniqueId);
-            if(ephUser != null) { return ephUser; }
+            if (ephUser != null) { return ephUser; }
 
             var newUser = NewUser(1);
 
             var windowsPrincipal = new WindowsPrincipal(user);
             var splitUser = user.Name.Split('\\');
-            
-            var newWindowsUser = new EphIt.Db.Models.UserWindows();
+
+            var newWindowsUser = new UserWindows();
             newWindowsUser.UserId = newUser.UserId;
             newWindowsUser.Sid = uniqueId;
             newWindowsUser.UserName = user.Name.Split('\\').Last();
@@ -72,10 +72,10 @@ namespace EphIt.User
                 throw new AuthenticationException("User not authenticated");
             }
 
-            if(_user != null) { return _user; }
+            if (_user != null) { return _user; }
 
             var userId = _httpContext.HttpContext.User.Identity;
-            if(userId is WindowsIdentity)
+            if (userId is WindowsIdentity)
             {
                 _user = RegisterWindows((WindowsIdentity)userId);
             }
@@ -85,7 +85,7 @@ namespace EphIt.User
         {
             var userId = (WindowsIdentity)_httpContext.HttpContext.User.Identity;
             var groupMembership = new HashSet<string>();
-            foreach(var g in userId.Groups)
+            foreach (var g in userId.Groups)
             {
                 groupMembership.Add(g.Value);
             }

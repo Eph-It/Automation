@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EphIt.User\EphIt.User.csproj" />
+    <ProjectReference Include="..\EphIt.BL.User\EphIt.BL.User.csproj" />
   </ItemGroup>
 
 </Project>

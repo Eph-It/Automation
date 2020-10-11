@@ -10,10 +10,10 @@ using EphIt.Db.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using EphIt.Db.Enums;
-using EphIt.User;
 using System;
 using Serilog;
 using EphIt.BL.Authorization;
+using EphIt.BL.User;
 
 namespace EphIt.Blazor.Server
 {

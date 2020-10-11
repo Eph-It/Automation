@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EphIt.User
+namespace EphIt.BL.User
 {
     public interface IEphItUser
     {

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EphIt.Db\EphIt.Db.csproj" />
-    <ProjectReference Include="..\EphIt.User\EphIt.User.csproj" />
+    <ProjectReference Include="..\EphIt.BL.User\EphIt.BL.User.csproj" />
   </ItemGroup>
 
 </Project>

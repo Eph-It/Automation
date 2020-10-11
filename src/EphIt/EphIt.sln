@@ -13,15 +13,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Service", "EphIt.Serv
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EphIt.SQL", "EphIt.SQL\EphIt.SQL.sqlproj", "{F731A260-5D69-4B90-9C61-8269DA68CD59}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.User", "Classlibraries\EphIt.User\EphIt.User.csproj", "{8C1F9538-74BD-4593-8C3E-0321271ABE70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.BL.User", "Classlibraries\EphIt.BL.User\EphIt.BL.User.csproj", "{8C1F9538-74BD-4593-8C3E-0321271ABE70}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.BL.Authorization", "Classlibraries\EphIt.BL.Authorization\EphIt.BL.Authorization.csproj", "{D25325F2-CDB0-4F1F-9F0E-834E4E9A3A58}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Classlibraries", "Classlibraries", "{33612611-DEB3-4683-8F22-405F063A1284}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Script", "Classlibraries\EphIt.Script\EphIt.Script.csproj", "{9B01D148-C466-483A-9848-9E58D892BE4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Script", "Classlibraries\EphIt.BL.Script\EphIt.BL.Script.csproj", "{9B01D148-C466-483A-9848-9E58D892BE4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EphIt.Db.Models", "Classlibraries\EphIt.Db.Models\EphIt.Db.Models.csproj", "{A9557B25-29EC-43AF-9E44-59C90E339505}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Db.Models", "Classlibraries\EphIt.Db.Models\EphIt.Db.Models.csproj", "{A9557B25-29EC-43AF-9E44-59C90E339505}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

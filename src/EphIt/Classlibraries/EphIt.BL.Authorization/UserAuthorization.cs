@@ -1,5 +1,5 @@
-﻿using EphIt.Db.Models;
-using EphIt.User;
+﻿using EphIt.BL.User;
+using EphIt.Db.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
