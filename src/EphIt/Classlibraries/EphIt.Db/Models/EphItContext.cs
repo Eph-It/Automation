@@ -285,7 +285,6 @@ namespace EphIt.Db.Models
                 entity.HasOne(d => d.Script)
                     .WithMany(p => p.RoleObjectScopeScript)
                     .HasForeignKey(d => d.ScriptId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Role_Object_Scope_Script_Script");
             });
 

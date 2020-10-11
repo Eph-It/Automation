@@ -11,7 +11,7 @@ using EphIt.Db.Enums;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
-namespace EphIt.Authorization
+namespace EphIt.BL.Authorization
 {
     public class EphItAuthRequirement : IAuthorizationRequirement
     {
@@ -32,8 +32,8 @@ namespace EphIt.Authorization
 
         public EphItAuthRequirementHandler(
             EphItContext dbContext
-            ,IHttpContextAccessor httpContextAccessor
-            ,IUserAuthorization userAuth
+            , IHttpContextAccessor httpContextAccessor
+            , IUserAuthorization userAuth
         )
         {
             _dbContext = dbContext;
@@ -51,7 +51,7 @@ namespace EphIt.Authorization
             var teams = _userAuth.GetRoles();
             Log.Information("User found to be on {count} teams", teams.Count);
 
-            if(requirement.RBACAction == null)
+            if (requirement.RBACAction == null)
             {
                 // Action would be null on things like a search endpoint for searching by Name
                 var rle = _dbContext.Role.Where(p =>
@@ -83,30 +83,30 @@ namespace EphIt.Authorization
                     ).Any()
                 )
                 .ToList();
-            
-            if(rolesMatching.Count == 0)
+
+            if (rolesMatching.Count == 0)
             {
                 Log.Warning("User is not in any roles matching the {requirement}", requirement);
                 context.Fail();
                 return Task.CompletedTask;
             }
-            foreach(var r in rolesMatching)
+            foreach (var r in rolesMatching)
             {
                 if (r.IsGlobal)
                 {
-                    Log.Information("User authenticated with {roleId}",r.RoleId);
+                    Log.Information("User authenticated with {roleId}", r.RoleId);
                     _userAuth.SetAuthenticatedWith(r.RoleId);
                     context.Succeed(requirement);
                     return Task.CompletedTask;
                 }
             }
             var t = _httpContextAccessor.HttpContext.GetRouteData();
-            if(t != null)
+            if (t != null)
             {
                 object objectId = null;
-                foreach(var key in t.Values.Keys)
+                foreach (var key in t.Values.Keys)
                 {
-                    if(key.ToLower().Equals(requirement.RBACObject.ToString().ToLower() + "id"))
+                    if (key.ToLower().Equals(requirement.RBACObject.ToString().ToLower() + "id"))
                     {
                         objectId = t.Values[key];
                     }
@@ -118,7 +118,7 @@ namespace EphIt.Authorization
                     context.Succeed(requirement);
                     return Task.CompletedTask;
                 }
-                else if(objectId == null)
+                else if (objectId == null)
                 {
                     context.Fail();
                     return Task.CompletedTask;

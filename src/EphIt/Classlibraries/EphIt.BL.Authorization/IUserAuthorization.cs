@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EphIt.Authorization
+namespace EphIt.BL.Authorization
 {
     public interface IUserAuthorization
     {

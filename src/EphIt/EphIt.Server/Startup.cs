@@ -8,12 +8,12 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using EphIt.Db.Models;
 using Microsoft.EntityFrameworkCore;
-using EphIt.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using EphIt.Db.Enums;
 using EphIt.User;
 using System;
 using Serilog;
+using EphIt.BL.Authorization;
 
 namespace EphIt.Blazor.Server
 {

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Classlibraries\EphIt.Authorization\EphIt.Authorization.csproj" />
+    <ProjectReference Include="..\Classlibraries\EphIt.BL.Authorization\EphIt.BL.Authorization.csproj" />
     <ProjectReference Include="..\EphIt.Blazor\EphIt.Blazor.csproj" />
     <ProjectReference Include="..\Classlibraries\EphIt.Db\EphIt.Db.csproj" />
     <ProjectReference Include="..\Classlibraries\EphIt.User\EphIt.User.csproj" />

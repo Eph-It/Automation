@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EphIt.Authorization;
+using EphIt.BL.Authorization;
 using EphIt.Db.Models;
 using EphIt.User;
 using Microsoft.AspNetCore.Authorization;

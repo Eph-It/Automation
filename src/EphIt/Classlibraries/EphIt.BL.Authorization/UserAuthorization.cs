@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace EphIt.Authorization
+namespace EphIt.BL.Authorization
 {
     public class UserAuthorization : IUserAuthorization
     {
@@ -20,11 +20,11 @@ namespace EphIt.Authorization
         private int? authenticatedWith = null;
         public List<int> GetRoles()
         {
-            if(_userRoles == null)
+            if (_userRoles == null)
             {
                 _userRoles = _db.RoleMembershipUser.Where
                     (
-                        p => 
+                        p =>
                             p.UserId.Equals(_userObj.Register().UserId)
                     )
                     .Select(p => p.RoleId)
