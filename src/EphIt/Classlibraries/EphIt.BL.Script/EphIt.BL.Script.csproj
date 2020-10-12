@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\EphIt.BL.Audit\EphIt.BL.Audit.csproj" />
+    <ProjectReference Include="..\EphIt.BL.Authorization\EphIt.BL.Authorization.csproj" />
     <ProjectReference Include="..\EphIt.Db\EphIt.Db.csproj" />
     <ProjectReference Include="..\EphIt.BL.User\EphIt.BL.User.csproj" />
   </ItemGroup>

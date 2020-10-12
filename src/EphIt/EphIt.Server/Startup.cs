@@ -14,6 +14,8 @@ using System;
 using Serilog;
 using EphIt.BL.Authorization;
 using EphIt.BL.User;
+using EphIt.BL.Script;
+using EphIt.BL.Audit;
 
 namespace EphIt.Blazor.Server
 {
@@ -43,11 +45,13 @@ namespace EphIt.Blazor.Server
             services.AddHttpContextAccessor();
             services.AddScoped<IEphItUser, EphItUser>();
             services.AddScoped<IUserAuthorization, UserAuthorization>();
+            services.AddScoped<IScriptManager, ScriptManager>();
+            services.AddScoped<IAuditLogger, AuditLogger>();
 
             services.AddAuthorization(options => 
             {
                 options.AddPolicy("ScriptEdit", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionsEnum.Modify, RBACObjectsId.Scripts)));
-                options.AddPolicy("Script", policy => policy.Requirements.Add(new EphItAuthRequirement(null, RBACObjectsId.Scripts)));
+                options.AddPolicy("Script", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionsEnum.Read, RBACObjectsId.Scripts)));
                 options.AddPolicy("ScriptRead", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionsEnum.Read, RBACObjectsId.Scripts)));
                 options.AddPolicy("ScriptDelete", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionsEnum.Delete, RBACObjectsId.Scripts)));
             });

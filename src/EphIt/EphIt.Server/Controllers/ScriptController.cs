@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EphIt.BL.Authorization;
+using EphIt.BL.Script;
 using EphIt.BL.User;
 using EphIt.Db.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -13,90 +14,52 @@ namespace EphIt.Server.Controllers
 {
     [Route("/api/[controller]")]
     [ApiController]
-    [Authorize("Script")]
+    [Authorize("ScriptRead")]
     public class ScriptController : ControllerBase
     {
         private IEphItUser _ephItUser;
         private EphItContext _dbContext;
         private IUserAuthorization _userAuth;
-        public ScriptController(EphItContext dbContext, IEphItUser ephItUser, IUserAuthorization userAuth)
+        private IScriptManager _scriptManager;
+        public ScriptController(EphItContext dbContext, IEphItUser ephItUser, IUserAuthorization userAuth, IScriptManager scriptManager)
         {
             _dbContext = dbContext;
             _ephItUser = ephItUser;
             _userAuth = userAuth;
+            _scriptManager = scriptManager;
         }
         [HttpGet]
         [Route("/api/[controller]/{scriptId}")]
-        [Authorize("ScriptRead")]
-        public Script Get(int scriptId)
+        public async Task<Script> GetAsync(int scriptId)
         {
-            return _dbContext.Script.Find(scriptId);
+            return await _scriptManager.FindAsync(scriptId, true);
         }
         [HttpGet]
         [Route("/api/[controller]")]
-        public IEnumerable<Script> Get(string Name)
+        public async Task<IEnumerable<Script>> GetAsync(string Name)
         {
-            return _dbContext.Script.Where(p => p.Name.Contains(Name)).ToList();
+            return await _scriptManager.SafeSearchScriptsAsync(Name, true);
         }
         [HttpPost]
         [Route("/api/[controller]")]
         [Authorize("ScriptEdit")]
-        public Script New([FromBody] ScriptPostParameters postParams)
+        public async Task<int> New([FromBody] ScriptPostParameters postParams)
         {
-            var newScript = new EphIt.Db.Models.Script
-            {
-                Created = DateTime.UtcNow,
-                CreatedByUserId = _ephItUser.Register().UserId,
-                Description = postParams.Description,
-                Name = postParams.Name,
-                Modified = DateTime.UtcNow
-            };
-            newScript.ModifiedByUserId = newScript.CreatedByUserId;
-            _dbContext.Add(newScript);
-            _dbContext.SaveChanges();
-
-            if (_userAuth.AuthenticatedWith().HasValue
-                //&& _userAuth.AuthenticatedWith() != 1
-            )
-            {
-                var newScriptRBAC = new EphIt.Db.Models.RoleObjectScopeScript();
-                newScriptRBAC.RoleId = _userAuth.AuthenticatedWith().Value;
-                newScriptRBAC.ScriptId = newScript.ScriptId;
-                _dbContext.Add(newScriptRBAC);
-                _dbContext.SaveChangesAsync();
-            }
-            
-            return _dbContext.Script.Find(newScript.ScriptId);
+            return await _scriptManager.NewAsync(postParams.Name, postParams.Description);
         }
         [HttpPut]
         [Route("[controller]/{scriptId}")]
         [Authorize("ScriptEdit")]
-        public Script Update(int scriptId, [FromBody] ScriptPostParameters postParams)
+        public async Task Update(int scriptId, [FromBody] ScriptPostParameters postParams)
         {
-            var script = _dbContext.Script.Find(scriptId);
-            if (!string.IsNullOrEmpty(postParams.Name))
-            {
-                script.Name = postParams.Name;
-                script.Modified = DateTime.UtcNow;
-                script.ModifiedByUserId = _ephItUser.Register().UserId;
-            }
-            if (!string.IsNullOrEmpty(postParams.Description))
-            {
-                script.Description = postParams.Description;
-                script.Modified = DateTime.UtcNow;
-                script.ModifiedByUserId = _ephItUser.Register().UserId;
-            }
-            _dbContext.SaveChanges();
-            return script;
+            await _scriptManager.Update(scriptId, postParams.Name, postParams.Description, postParams.Published_Version);
         }
         [HttpDelete]
         [Route("[controller]/{scriptId}")]
         [Authorize("ScriptDelete")]
-        public void Delete(int scriptId)
+        public async Task Delete(int scriptId)
         {
-            var script = _dbContext.Script.Find(scriptId);
-            _dbContext.Remove(script);
-            _dbContext.SaveChanges();
+            await _scriptManager.Delete(scriptId);
         }
     }
     public class ScriptPostParameters

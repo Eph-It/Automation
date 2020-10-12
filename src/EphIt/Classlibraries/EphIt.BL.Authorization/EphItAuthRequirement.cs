@@ -10,14 +10,15 @@ using System.Threading.Tasks;
 using EphIt.Db.Enums;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Microsoft.EntityFrameworkCore;
 
 namespace EphIt.BL.Authorization
 {
     public class EphItAuthRequirement : IAuthorizationRequirement
     {
-        public RBACActionsEnum? RBACAction { get; set; }
+        public RBACActionsEnum RBACAction { get; set; }
         public RBACObjectsId RBACObject { get; set; }
-        public EphItAuthRequirement(RBACActionsEnum? rbacAction, RBACObjectsId objectId)
+        public EphItAuthRequirement(RBACActionsEnum rbacAction, RBACObjectsId objectId)
         {
             RBACAction = rbacAction;
             RBACObject = objectId;
@@ -40,70 +41,21 @@ namespace EphIt.BL.Authorization
             _httpContextAccessor = httpContextAccessor;
             _userAuth = userAuth;
         }
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, EphItAuthRequirement requirement)
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, EphItAuthRequirement requirement)
         {
             _userAuth.SetAuthenticatedWith(null);
             if (!context.User.Identity.IsAuthenticated)
             {
                 Log.Warning("User is not authenticated.");
-                return Task.CompletedTask;
-            }
-            var teams = _userAuth.GetRoles();
-            Log.Information("User found to be on {count} teams", teams.Count);
-
-            if (requirement.RBACAction == null)
-            {
-                // Action would be null on things like a search endpoint for searching by Name
-                var rle = _dbContext.Role.Where(p =>
-                        teams.Contains(p.RoleId)
-                        && p.RoleObjectAction.Where(obj =>
-                            obj.RbacObjectId.Equals((short)requirement.RBACObject)
-                        ).Any()
-                    )
-                    .FirstOrDefault();
-                if (rle != null)
-                {
-                    _userAuth.SetAuthenticatedWith(rle.RoleId);
-                    Log.Information("User authenticated with {role}", rle.RoleId);
-                    context.Succeed(requirement);
-                }
-                else
-                {
-                    Log.Warning("User is not in any roles matching the {requirement}", requirement);
-                    context.Fail();
-                }
-                return Task.CompletedTask;
-            }
-
-            var rolesMatching = _dbContext.Role.Where(p =>
-                    teams.Contains(p.RoleId)
-                    && p.RoleObjectAction.Where(obj =>
-                        obj.RbacActionId.Equals((short)requirement.RBACAction)
-                        && obj.RbacObjectId.Equals((short)requirement.RBACObject)
-                    ).Any()
-                )
-                .ToList();
-
-            if (rolesMatching.Count == 0)
-            {
-                Log.Warning("User is not in any roles matching the {requirement}", requirement);
                 context.Fail();
-                return Task.CompletedTask;
+                return;
             }
-            foreach (var r in rolesMatching)
-            {
-                if (r.IsGlobal)
-                {
-                    Log.Information("User authenticated with {roleId}", r.RoleId);
-                    _userAuth.SetAuthenticatedWith(r.RoleId);
-                    context.Succeed(requirement);
-                    return Task.CompletedTask;
-                }
-            }
+
             var t = _httpContextAccessor.HttpContext.GetRouteData();
+            object objectId = null;
+
             if (t != null)
             {
-                object objectId = null;
                 foreach (var key in t.Values.Keys)
                 {
                     if (key.ToLower().Equals(requirement.RBACObject.ToString().ToLower() + "id"))
@@ -111,52 +63,66 @@ namespace EphIt.BL.Authorization
                         objectId = t.Values[key];
                     }
                 }
-                if (objectId == null && _httpContextAccessor.HttpContext.Request.Method.ToLower().Equals("post"))
-                {
-                    Log.Information("User authenticated with {roleId}", rolesMatching[0].RoleId);
-                    _userAuth.SetAuthenticatedWith(rolesMatching[0].RoleId);
-                    context.Succeed(requirement);
-                    return Task.CompletedTask;
-                }
-                else if (objectId == null)
-                {
-                    context.Fail();
-                    return Task.CompletedTask;
-                }
-                var rolesMatchingIds = rolesMatching.Select(p => p.RoleId).ToList();
-                switch (requirement.RBACObject)
-                {
-                    case RBACObjectsId.Scripts:
-
-                        var foundRole = _dbContext.RoleObjectScopeScript
-                                .Where(p =>
-                                    p.ScriptId.Equals((int)objectId)
-                                    && rolesMatchingIds.Contains(p.RoleId)
-                                )
-                                .FirstOrDefault();
-                        if (foundRole != null)
-                        {
-                            Log.Information("User authenticated to script with {roleobjectscope}", foundRole.RoleObjectScopeScriptId);
-                            context.Succeed(requirement);
-                            _userAuth.SetAuthenticatedWith(foundRole.RoleId);
-                            return Task.CompletedTask;
-                        }
-                        break;
-                    case RBACObjectsId.Roles:
-                        break;
-                    case RBACObjectsId.Variables:
-                        break;
-                    case RBACObjectsId.Modules:
-                        break;
-                    case RBACObjectsId.Jobs:
-                        break;
-                    default:
-                        break;
-                }
             }
-            Log.Warning("User not authenticated to {RoleRequirements}", requirement);
+
+            AuthorizedObjects authObjects = new AuthorizedObjects();
+
+            switch (requirement.RBACObject)
+            {
+                case RBACObjectsId.Scripts:
+                    if(objectId != null)
+                    {
+                        authObjects = await _userAuth.GetAuthorizedScripts((int)objectId, requirement.RBACAction);
+                    }
+                    else
+                    {
+                        authObjects = await _userAuth.GetAuthorizedScripts(null, requirement.RBACAction);
+                    }
+                    break;
+            }
+
+            if (authObjects.GloballyAuthorized || authObjects.AuthorizedIds.Count > 0)
+            {
+                // Globally Authorized = all objects so auth passes
+                // AuthorizedIds > 0 means user is allowed to perform x action on objectId
+                Log.Information($"User {context.User.Identity.Name} is authorized for action {requirement.RBACAction} on object type {requirement.RBACObject}.");
+                context.Succeed(requirement);
+                return;
+            }
+
+            if(objectId != null)
+            {
+                // This means user tried to do something to an object and the auth check didn't pass
+                Log.Warning($"User {context.User.Identity.Name} is NOT authorized for action {requirement.RBACAction} on object type {requirement.RBACObject} with objectId {objectId}");
+                context.Fail();
+                return;
+            }
+
+            // We would reach this point if the user tried to do something with no objectId (ie, create a new script)
+            // And they don't have global permissions to do that action or their security role doesn't have any 
+            // objects associated with it. So if Role1 has the EditScript permission but no scripts associated with it yet
+            // We'd wind up here. Now we simply do a check to see if they are in a role that can do the required action
+            // IE if they can do a ScriptEdit, this succeeds because they are trying to create a script.
+
+            var teams = await _userAuth.GetRoleIdsAsync();
+
+            if(await _dbContext.Role.Where(p =>
+                    teams.Contains(p.RoleId)
+                    && p.RoleObjectAction.Where(obj =>
+                        obj.RbacObjectId.Equals((short)requirement.RBACObject) &&
+                        obj.RbacActionId.Equals((short)requirement.RBACAction)
+                    ).Any()
+                )
+                .AnyAsync()
+                )
+            {
+                Log.Information($"User {context.User.Identity.Name} is authorized for action {requirement.RBACAction} on object type {requirement.RBACObject}.");
+                context.Succeed(requirement);
+                return;
+            }
+            Log.Warning($"User {context.User.Identity.Name} is NOT authorized for action {requirement.RBACAction} on object type {requirement.RBACObject}");
             context.Fail();
-            return Task.CompletedTask;
+            return;
         }
     }
 }

@@ -8,6 +8,7 @@
     [Published_Version] INT NULL, 
     [Name] NVARCHAR(150) NOT NULL, 
     [Description] NVARCHAR(200) NULL, 
+    [IsDeleted] BIT NOT NULL DEFAULT 0, 
     CONSTRAINT [FK_Script_User_CreatedBy] FOREIGN KEY ([Created_By_User_Id]) REFERENCES [User]([User_Id]),
     CONSTRAINT [FK_Script_User_ModifiedBy] FOREIGN KEY ([Modified_By_User_Id]) REFERENCES [User]([User_Id])
 )

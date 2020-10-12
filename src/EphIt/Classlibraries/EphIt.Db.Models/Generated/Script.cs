@@ -21,6 +21,7 @@ namespace EphIt.Db.Models
         public int? PublishedVersion { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual User CreatedByUser { get; set; }
         public virtual User ModifiedByUser { get; set; }
