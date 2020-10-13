@@ -41,7 +41,7 @@ namespace EphIt.BL.Script
         {
             IQueryable<Db.Models.VMScript> scriptQuery;
 
-            var authorizedScripts = await _userAuth.GetAuthorizedScripts(null, Db.Enums.RBACActionsEnum.Read);
+            var authorizedScripts = await _userAuth.GetAuthorizedScripts(null, RBACActionEnum.Read);
             if (authorizedScripts.GloballyAuthorized)
             {
                 scriptQuery = _dbContext.Script.Where(p => p.Name.Contains(name) && p.IsDeleted == false).Select(p => new VMScript(p));
@@ -67,7 +67,7 @@ namespace EphIt.BL.Script
             // Script - so we want to ensure they have permission to it.
             var userRoleId = await _dbContext.RoleObjectAction
                                 .Where(p => 
-                                    p.RbacActionId.Equals((short)RBACActionsEnum.Create) 
+                                    p.RbacActionId.Equals((short)RBACActionEnum.Create) 
                                     && p.RbacObjectId.Equals((short)RBACObjectsId.Scripts)
                                     && p.Role.RoleMembershipUser.Where(us => us.UserId.Equals(userId)).Any()
                                 )

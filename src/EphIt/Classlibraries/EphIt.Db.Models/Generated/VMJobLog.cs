@@ -14,14 +14,14 @@ namespace EphIt.Db.Models
             JobLogId = obj.JobLogId;
             JobUid = obj.JobUid;
             Message = obj.Message;
-            Stream = obj.Stream;
+            LevelId = obj.LevelId;
             LogTime = obj.LogTime;
         }
 
-        public long JobLogId { get; set; }
+        public Guid JobLogId { get; set; }
         public Guid JobUid { get; set; }
         public string Message { get; set; }
-        public string Stream { get; set; }
+        public short LevelId { get; set; }
         public DateTime LogTime { get; set; }
 
     }

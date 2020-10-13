@@ -7,8 +7,8 @@ namespace EphIt.BL.User
 {
     public interface IEphItUser
     {
-        VUser Register();
+        Db.Models.User Register();
         ICollection<string> GetGroupIds();
-        VUser RegisterCurrent();
+        Db.Models.User RegisterCurrent();
     }
 }

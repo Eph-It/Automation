@@ -13,6 +13,6 @@ namespace EphIt.BL.Authorization
         Task<List<int>> GetRoleIdsAsync();
         void SetAuthenticatedWith(int? roleId);
         int? AuthenticatedWith();
-        Task<AuthorizedObjects> GetAuthorizedScripts(int? scriptId = null, RBACActionsEnum? action = null);
+        Task<AuthorizedObjects> GetAuthorizedScripts(int? scriptId = null, RBACActionEnum? action = null);
     }
 }

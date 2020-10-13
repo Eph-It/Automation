@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EphIt.Db.Models
 {
-    public partial class User
+    public class User
     {
         public User()
         {
@@ -14,9 +18,10 @@ namespace EphIt.Db.Models
             ScriptCreatedByUser = new HashSet<Script>();
             ScriptModifiedByUser = new HashSet<Script>();
             ScriptVersion = new HashSet<ScriptVersion>();
-            UserWindows = new HashSet<UserWindows>();
+            UserActiveDirectory = new HashSet<UserActiveDirectory>();
         }
-
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
         public short AuthenticationId { get; set; }
 
@@ -28,6 +33,16 @@ namespace EphIt.Db.Models
         public virtual ICollection<Script> ScriptCreatedByUser { get; set; }
         public virtual ICollection<Script> ScriptModifiedByUser { get; set; }
         public virtual ICollection<ScriptVersion> ScriptVersion { get; set; }
-        public virtual ICollection<UserWindows> UserWindows { get; set; }
+        public virtual ICollection<UserActiveDirectory> UserActiveDirectory { get; set; }
+    }
+    public class UserConfiguration : IEntityTypeConfiguration<User>
+    {
+        public void Configure(EntityTypeBuilder<User> builder)
+        {
+            builder.HasOne(d => d.Authentication)
+                .WithMany(p => p.User)
+                .HasForeignKey(d => d.AuthenticationId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

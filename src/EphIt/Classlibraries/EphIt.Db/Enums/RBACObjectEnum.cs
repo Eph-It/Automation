@@ -2,16 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EphIt.Db.Enums
+namespace EphIt.Db.Models
 {
-
-    public enum ScriptLanguageEnum : short
-    {
-        PowerShell5 = 1
-    }
-
-
-    public enum RBACObjectsId : short
+    public enum RBACObjectEnum
     {
         Scripts = 1,
         Roles = 2,

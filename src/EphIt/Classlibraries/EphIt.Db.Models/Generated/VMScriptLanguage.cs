@@ -13,12 +13,10 @@ namespace EphIt.Db.Models
         {
             ScriptLanguageId = obj.ScriptLanguageId;
             Language = obj.Language;
-            Version = obj.Version;
         }
 
         public short ScriptLanguageId { get; set; }
         public string Language { get; set; }
-        public string Version { get; set; }
 
     }
 }

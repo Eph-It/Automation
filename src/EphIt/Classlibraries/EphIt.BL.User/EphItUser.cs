@@ -11,7 +11,7 @@ namespace EphIt.BL.User
 {
     public class EphItUser : IEphItUser
     {
-        private VUser _user;
+        private Db.Models.User _user;
         private EphItContext _db;
         private IHttpContextAccessor _httpContext;
         public EphItUser(EphItContext context, IHttpContextAccessor httpContextAccessor)
@@ -19,16 +19,19 @@ namespace EphIt.BL.User
             _db = context;
             _httpContext = httpContextAccessor;
         }
-        private VUser GetUser(string authType, string uniqueIdentifier)
+        private Db.Models.User GetUser(string authType, string uniqueIdentifier)
         {
-            _user = _db.VUser.Where
-                    (
-                        p =>
-                            p.AuthenticationType.Equals(authType)
-                            && p.UniqueIdentifier.Equals(uniqueIdentifier)
-                    )
-                    .FirstOrDefault();
-            return _user;
+            switch (authType)
+            {
+                case "ActiveDirectory":
+                    return _db.UserActiveDirectory
+                            .Where(p => p.SID.Equals(uniqueIdentifier))
+                            .Select(p => p.User)
+                            .FirstOrDefault();
+                default:
+                    break;
+            }
+            return null;
         }
         private Db.Models.User NewUser(short authType)
         {
@@ -38,34 +41,34 @@ namespace EphIt.BL.User
             _db.SaveChanges();
             return newUser;
         }
-        private VUser RegisterWindows(WindowsIdentity user)
+        private Db.Models.User RegisterActiveDirectory(WindowsIdentity user)
         {
-            var authType = "Windows";
+            var authType = "ActiveDirectory";
             string uniqueId = user.User.ToString();
 
             var ephUser = GetUser(authType, uniqueId);
             if (ephUser != null) { return ephUser; }
 
-            var newUser = NewUser(1);
+            var newUser = NewUser((short)AuthenticationEnum.ActiveDirectory);
 
             var windowsPrincipal = new WindowsPrincipal(user);
             var splitUser = user.Name.Split('\\');
 
-            var newWindowsUser = new UserWindows();
-            newWindowsUser.UserId = newUser.UserId;
-            newWindowsUser.Sid = uniqueId;
-            newWindowsUser.UserName = user.Name.Split('\\').Last();
-            newWindowsUser.Domain = splitUser.Count() > 1 ? splitUser[0] : "WORKGROUP";
-            _db.Add(newWindowsUser);
+            var newActiveDirectoryUser = new UserActiveDirectory();
+            newActiveDirectoryUser.UserId = newUser.UserId;
+            newActiveDirectoryUser.SID = uniqueId;
+            newActiveDirectoryUser.UserName = user.Name.Split('\\').Last();
+            newActiveDirectoryUser.Domain = splitUser.Count() > 1 ? splitUser[0] : "WORKGROUP";
+            _db.Add(newActiveDirectoryUser);
             _db.SaveChanges();
 
             return GetUser(authType, uniqueId);
         }
-        public VUser RegisterCurrent()
+        public Db.Models.User RegisterCurrent()
         {
-            return RegisterWindows(WindowsIdentity.GetCurrent());
+            return RegisterActiveDirectory(WindowsIdentity.GetCurrent());
         }
-        public VUser Register()
+        public Db.Models.User Register()
         {
             if (!_httpContext.HttpContext.User.Identity.IsAuthenticated)
             {
@@ -77,7 +80,7 @@ namespace EphIt.BL.User
             var userId = _httpContext.HttpContext.User.Identity;
             if (userId is WindowsIdentity)
             {
-                _user = RegisterWindows((WindowsIdentity)userId);
+                _user = RegisterActiveDirectory((WindowsIdentity)userId);
             }
             return _user;
         }

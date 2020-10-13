@@ -16,9 +16,9 @@ namespace EphIt.BL.Authorization
 {
     public class EphItAuthRequirement : IAuthorizationRequirement
     {
-        public RBACActionsEnum RBACAction { get; set; }
+        public RBACActionEnum RBACAction { get; set; }
         public RBACObjectsId RBACObject { get; set; }
-        public EphItAuthRequirement(RBACActionsEnum rbacAction, RBACObjectsId objectId)
+        public EphItAuthRequirement(RBACActionEnum rbacAction, RBACObjectsId objectId)
         {
             RBACAction = rbacAction;
             RBACObject = objectId;

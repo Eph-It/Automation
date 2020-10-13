@@ -60,7 +60,7 @@ namespace EphIt.BL.Authorization
         {
             return authenticatedWith;
         }
-        public async Task<AuthorizedObjects> GetAuthorizedScripts(int? scriptId = null, RBACActionsEnum? action = null)
+        public async Task<AuthorizedObjects> GetAuthorizedScripts(int? scriptId = null, RBACActionEnum? action = null)
         {
             var authObjs = new AuthorizedObjects();
 
