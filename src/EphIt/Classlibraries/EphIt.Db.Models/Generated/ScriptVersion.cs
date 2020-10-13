@@ -12,6 +12,7 @@ namespace EphIt.Db.Models
         public int CreatedByUserId { get; set; }
         public short? ScriptLanguageId { get; set; }
         public int ScriptId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual User CreatedByUser { get; set; }
         public virtual Script Script { get; set; }

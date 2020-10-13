@@ -17,6 +17,10 @@ using EphIt.BL.User;
 using EphIt.BL.Script;
 using EphIt.BL.Audit;
 
+#if DEBUG
+using Microsoft.SqlServer.Dac;
+#endif
+
 namespace EphIt.Blazor.Server
 {
     public class Startup
@@ -36,6 +40,17 @@ namespace EphIt.Blazor.Server
             AppDomain.CurrentDomain.ProcessExit += (s, e) => Log.CloseAndFlush();
             services.AddSingleton(Log.Logger);
 
+#if DEBUG
+            var cString = Configuration.GetConnectionString("EphItDb");
+            var dacpac = DacPackage.Load(@"EphIt.Sql.dacpac");
+            var dacpacService = new DacServices(cString);
+            var pOptions = new PublishOptions();
+            var dOptions = new DacDeployOptions();
+            dOptions.CreateNewDatabase = true;
+            pOptions.DeployOptions = dOptions;
+            dacpacService.Publish(dacpac, "EphIt", pOptions);
+#endif
+
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddDbContext<EphItContext>(
@@ -47,7 +62,6 @@ namespace EphIt.Blazor.Server
             services.AddScoped<IUserAuthorization, UserAuthorization>();
             services.AddScoped<IScriptManager, ScriptManager>();
             services.AddScoped<IAuditLogger, AuditLogger>();
-
             services.AddAuthorization(options => 
             {
                 options.AddPolicy("ScriptEdit", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionsEnum.Modify, RBACObjectsId.Scripts)));
@@ -92,27 +106,7 @@ namespace EphIt.Blazor.Server
         }
         public void ConfigureAdministratorRole(IEphItUser user, EphItContext db)
         {
-            foreach(RBACActionsEnum action in Enum.GetValues(typeof(RBACActionsEnum)))
-            {
-                foreach(RBACObjectsId obj in Enum.GetValues(typeof(RBACObjectsId)))
-                {
-                    if(!db.RoleObjectAction
-                        .Where(p => 
-                            p.RbacActionId.Equals((short)action)
-                            && p.RbacObjectId.Equals((short)obj)
-                            && p.RoleId.Equals(1)
-                        )
-                        .Any())
-                    {
-                        var newRoleObjAction = new RoleObjectAction();
-                        newRoleObjAction.RbacActionId = (short)action;
-                        newRoleObjAction.RbacObjectId = (short)obj;
-                        newRoleObjAction.RoleId = 1;
-                        db.Add(newRoleObjAction);
-                    }
-                }
-            }
-
+            
             // Add current user to full admin role
             var vUser = user.RegisterCurrent();
             if (!db.RoleMembershipUser.Where(p => p.UserId == vUser.UserId && p.RoleId == 1).Any())

@@ -84,4 +84,11 @@
   <ItemGroup>
     <RefactorLog Include="EphIt.SQL.refactorlog" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="PostBuild.ps1" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

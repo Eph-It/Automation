@@ -8,6 +8,13 @@ $Body = @{
     'Description' = 'MyDes'
 } | ConvertTo-Json
 
-Invoke-RestMethod -Uri 'https://localhost:44354/api/Script' -UseDefaultCredentials -Method Post -Body $Body -ContentType 'application/json'
+$Result = Invoke-RestMethod -Uri 'https://localhost:44354/api/Script' -UseDefaultCredentials -Method Post -Body $Body -ContentType 'application/json'
 
-Invoke-RestMethod -Uri 'https://localhost:44354/api/Script/11' -UseDefaultCredentials
+$null = Invoke-RestMethod -Uri 'https://localhost:44354/api/Script/11' -UseDefaultCredentials
+
+$Body = @{
+    'ScriptBody' = 'Write-Host "test2"'
+    'ScriptLanguageId' = 1
+} | ConvertTo-JSON
+
+Invoke-RestMethod -Uri "https://localhost:44354/api/Script/$($Result)/Version" -UseDefaultCredentials -Method Post -Body $Body -ContentType 'application/json'

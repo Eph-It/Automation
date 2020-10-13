@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace EphIt.BL.Script
 {
@@ -26,30 +27,29 @@ namespace EphIt.BL.Script
             _userAuth = userAuth;
             _auditLogger = auditLogger;
         }
-
-        public async Task<Db.Models.Script> FindAsync(int scriptId, bool includePublished = false)
+        public async Task<Db.Models.VMScript> FindAsync(int scriptId, bool includePublished = false)
         {
-            var query = _dbContext.Script.Where(p => p.ScriptId == scriptId);
+            var query = _dbContext.Script.Where(p => p.ScriptId == scriptId)
+                        .Select(p => new VMScript(p));
             if (includePublished)
             {
                 query.Include(p => p.PublishedVersion);
             }
             return await query.FirstOrDefaultAsync();
         }
-
-        public async Task<IEnumerable<Db.Models.Script>> SafeSearchScriptsAsync(string name, bool includePublished = false)
+        public async Task<List<VMScript>> SafeSearchScriptsAsync(string name, bool includePublished = false)
         {
-            IQueryable<Db.Models.Script> scriptQuery;
+            IQueryable<Db.Models.VMScript> scriptQuery;
 
             var authorizedScripts = await _userAuth.GetAuthorizedScripts(null, Db.Enums.RBACActionsEnum.Read);
             if (authorizedScripts.GloballyAuthorized)
             {
-                scriptQuery = _dbContext.Script.Where(p => p.Name.Contains(name));
+                scriptQuery = _dbContext.Script.Where(p => p.Name.Contains(name) && p.IsDeleted == false).Select(p => new VMScript(p));
             }
             else
             {
                 var authorizedScriptIds = authorizedScripts.AuthorizedIds.Select(p => p.Id).ToList();
-                scriptQuery = _dbContext.Script.Where(p => p.Name.Contains(name) && authorizedScriptIds.Contains(p.ScriptId));
+                scriptQuery = _dbContext.Script.Where(p => p.Name.Contains(name) && authorizedScriptIds.Contains(p.ScriptId) && p.IsDeleted == false).Select(p => new VMScript(p));
             }
             
             if (includePublished)
@@ -58,7 +58,6 @@ namespace EphIt.BL.Script
             }
             return await scriptQuery.ToListAsync();
         }
-
         public async Task<int> NewAsync(string name, string description)
         {
             var userId = _ephItUser.Register().UserId;
@@ -94,7 +93,6 @@ namespace EphIt.BL.Script
 
             return newScript.ScriptId;
         }
-
         public async Task AssociateWithRoleAsync(int scriptId, int roleId)
         {
             if(!await _dbContext.RoleObjectAction
@@ -127,7 +125,6 @@ namespace EphIt.BL.Script
             await _dbContext.SaveChangesAsync();
             await _auditLogger.AuditLog(AuditObject.Role, AuditAction.Modify, AuditStatus.Success, newRoleObjScope.RoleId);
         }
-    
         public async Task Update(int scriptId, string name = null, string description = null, int? PublishedVersion = null)
         {
             var script = await _dbContext.Script.FindAsync(scriptId);
@@ -164,6 +161,46 @@ namespace EphIt.BL.Script
             script.Modified = DateTime.UtcNow;
             await _dbContext.SaveChangesAsync();
             await _auditLogger.AuditLog(AuditObject.Script, AuditAction.Delete, AuditStatus.Success, scriptId);
+        }
+        public Task<List<VMScriptVersion>>GetVersionAsync(int scriptId, bool IncldueAll)
+        {
+            if (IncldueAll)
+            {
+                return _dbContext.ScriptVersion
+                    .Where(p => p.ScriptId.Equals(scriptId) && p.IsDeleted == false)
+                    .Select(p => new VMScriptVersion(p)).ToListAsync();
+            }
+            return _dbContext.ScriptVersion
+                    .Where(p => p.ScriptId.Equals(scriptId) && p.ScriptVersionId.Equals(p.Script.PublishedVersion) && p.IsDeleted == false)
+                    .Select(p => new VMScriptVersion(p)).ToListAsync();
+        }
+        public async Task<int> NewVersionAsync(int scriptId, string scriptBody, short scriptLanguageId)
+        {
+            int? maxVersionId = _dbContext.ScriptVersion
+                            .Where(p => p.ScriptId == scriptId)
+                            .OrderByDescending(p => p.Version)
+                            .Select(p => p.Version)
+                            .FirstOrDefault();
+            var userId = _ephItUser.Register().UserId;
+            var newVersion = new ScriptVersion();
+            newVersion.Body = scriptBody;
+            newVersion.Created = DateTime.UtcNow;
+            newVersion.CreatedByUserId = userId;
+            newVersion.ScriptId = scriptId;
+            newVersion.ScriptLanguageId = scriptLanguageId;
+            newVersion.Version = maxVersionId.HasValue ? maxVersionId.Value + 1 : 1;
+            _dbContext.Add(newVersion);
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch
+            {
+                await _auditLogger.AuditLog(AuditObject.ScriptVersion, AuditAction.Create, AuditStatus.Error, newVersion.ScriptVersionId);
+                throw;
+            }
+            await _auditLogger.AuditLog(AuditObject.ScriptVersion, AuditAction.Create, AuditStatus.Success, newVersion.ScriptVersionId);
+            return newVersion.ScriptVersionId;
         }
     }
 }

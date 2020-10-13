@@ -30,15 +30,22 @@ namespace EphIt.Server.Controllers
         }
         [HttpGet]
         [Route("/api/[controller]/{scriptId}")]
-        public async Task<Script> GetAsync(int scriptId)
+        public async Task<ActionResult<VMScript>> GetAsync(int scriptId)
         {
-            return await _scriptManager.FindAsync(scriptId, true);
+            var item = await _scriptManager.FindAsync(scriptId);
+            if(item == null)
+            {
+                return NotFound();
+            }
+
+            return item;
         }
         [HttpGet]
         [Route("/api/[controller]")]
-        public async Task<IEnumerable<Script>> GetAsync(string Name)
+        public async Task<ActionResult<IEnumerable<VMScript>>> GetAsync(string Name)
         {
-            return await _scriptManager.SafeSearchScriptsAsync(Name, true);
+            var results = await _scriptManager.SafeSearchScriptsAsync(Name, true);
+            return results;
         }
         [HttpPost]
         [Route("/api/[controller]")]
@@ -61,11 +68,29 @@ namespace EphIt.Server.Controllers
         {
             await _scriptManager.Delete(scriptId);
         }
+        [HttpGet]
+        [Route("[controller]/{scriptId}/Version")]
+        public async Task<IEnumerable<VMScriptVersion>> GetVersion(int scriptId, bool IncludeAll = false)
+        {
+            return await _scriptManager.GetVersionAsync(scriptId, IncludeAll);
+        }
+        [HttpPost]
+        [Route("/api/[controller]/{scriptId}/Version")]
+        [Authorize("ScriptEdit")]
+        public async Task<int> NewVersion(int scriptId, [FromBody] ScriptVersionPostParameters postParams)
+        {
+            return await _scriptManager.NewVersionAsync(scriptId, postParams.ScriptBody, postParams.ScriptLanguageId);
+        }
     }
     public class ScriptPostParameters
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public int? Published_Version { get; set; }
+    }
+    public class ScriptVersionPostParameters
+    {
+        public string ScriptBody { get; set; }
+        public short ScriptLanguageId { get; set; }
     }
 }
