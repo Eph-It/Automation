@@ -13,4 +13,3 @@ jobs:
 
     steps:
       - run: cmd /c build.cmd
-        name: Build Solution
