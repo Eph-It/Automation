@@ -12,4 +12,9 @@ jobs:
     runs-on: self-hosted 
 
     steps:
-      - run: & cmd /c build.cmd
+      - working-directory: src\EphIt
+        run: dotnet restore
+        name: Restore
+      - working-directory: src\EphIt
+        name: Build
+        run: dotnet build --configuration Release --no-restore
