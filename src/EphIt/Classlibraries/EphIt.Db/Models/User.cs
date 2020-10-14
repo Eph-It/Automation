@@ -21,7 +21,6 @@ namespace EphIt.Db.Models
             UserActiveDirectory = new HashSet<UserActiveDirectory>();
         }
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
         public short AuthenticationId { get; set; }
 
@@ -43,6 +42,12 @@ namespace EphIt.Db.Models
                 .WithMany(p => p.User)
                 .HasForeignKey(d => d.AuthenticationId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasData(new User()
+            {
+                AuthenticationId = (short)AuthenticationEnum.EphItInternal,
+                UserId = -1
+            });
         }
     }
 }

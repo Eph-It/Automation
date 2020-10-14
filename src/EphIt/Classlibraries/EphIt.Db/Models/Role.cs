@@ -48,6 +48,7 @@ namespace EphIt.Db.Models
                 .WithMany(d => d.RoleModifiedByUser)
                 .HasForeignKey(key => key.ModifiedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            
         }
     }
 }

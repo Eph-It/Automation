@@ -21,12 +21,6 @@
     <ProjectReference Include="..\Classlibraries\EphIt.BL.User\EphIt.BL.User.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="EphIt.SQL.dacpac">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="pwsh.exe -File PreBuild.ps1" />
   </Target>
