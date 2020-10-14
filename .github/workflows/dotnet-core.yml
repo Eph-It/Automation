@@ -12,4 +12,4 @@ jobs:
     runs-on: self-hosted 
 
     steps:
-      - run: cmd /c build.cmd
+      - run: & cmd /c build.cmd
