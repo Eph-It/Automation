@@ -9,7 +9,7 @@ Tracking work through a [Pivotal Project](https://www.pivotaltracker.com/project
 # Major Components
 
 ## EphIt.Blazor
-
+ 
 This is the user interface project. It is a Blazor Web Assembly project with a server API back end of EphIt.Server. Lowest priority so it just exists.
 
 ## EphIt.Server
