@@ -1,5 +1,0 @@
-﻿CREATE TABLE [dbo].[RBAC_Action]
-(
-	[RBAC_Action_Id] SMALLINT NOT NULL PRIMARY KEY, 
-    [Name] NVARCHAR(15) NOT NULL 
-)

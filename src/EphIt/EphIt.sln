@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Db", "Classlibraries\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Service", "EphIt.Service\EphIt.Service.csproj", "{8B125E33-97F7-4317-BF07-C827C5591AA8}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EphIt.SQL", "EphIt.SQL\EphIt.SQL.sqlproj", "{F731A260-5D69-4B90-9C61-8269DA68CD59}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.BL.User", "Classlibraries\EphIt.BL.User\EphIt.BL.User.csproj", "{8C1F9538-74BD-4593-8C3E-0321271ABE70}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.BL.Authorization", "Classlibraries\EphIt.BL.Authorization\EphIt.BL.Authorization.csproj", "{D25325F2-CDB0-4F1F-9F0E-834E4E9A3A58}"
@@ -23,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.BL.Script", "Classlib
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Db.Models", "Classlibraries\EphIt.Db.Models\EphIt.Db.Models.csproj", "{A9557B25-29EC-43AF-9E44-59C90E339505}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EphIt.BL.Audit", "EphIt.BL.Audit\EphIt.BL.Audit.csproj", "{C4692F38-2933-4642-93E4-4D570E6A4023}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.BL.Audit", "EphIt.BL.Audit\EphIt.BL.Audit.csproj", "{C4692F38-2933-4642-93E4-4D570E6A4023}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,12 +45,6 @@ Global
 		{8B125E33-97F7-4317-BF07-C827C5591AA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B125E33-97F7-4317-BF07-C827C5591AA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B125E33-97F7-4317-BF07-C827C5591AA8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F731A260-5D69-4B90-9C61-8269DA68CD59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F731A260-5D69-4B90-9C61-8269DA68CD59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F731A260-5D69-4B90-9C61-8269DA68CD59}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{F731A260-5D69-4B90-9C61-8269DA68CD59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F731A260-5D69-4B90-9C61-8269DA68CD59}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F731A260-5D69-4B90-9C61-8269DA68CD59}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{8C1F9538-74BD-4593-8C3E-0321271ABE70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C1F9538-74BD-4593-8C3E-0321271ABE70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C1F9538-74BD-4593-8C3E-0321271ABE70}.Release|Any CPU.ActiveCfg = Release|Any CPU
