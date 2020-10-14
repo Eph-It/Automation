@@ -12,6 +12,10 @@ using Serilog;
 using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+using EphIt.Service.Services.Agent;
+using EphIt.Service.Services.JobManager;
+using EphIt.Service.Services.RunspaceManager;
+using EphIt.Service.Workers;
 
 namespace EphIt.Service
 {
@@ -54,7 +58,10 @@ namespace EphIt.Service
                 .UseWindowsService()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    
+                    services.AddSingleton<IRunspaceManager, RunspaceManager>();
+                    services.AddSingleton<IJobManager, JobManager>();
+                    services.AddScoped<IPSAgent, PSAgent>();
+                    services.AddHostedService<StartPendingJobsWorker>();
                     services.AddDbContext<EphItContext>(
                         options =>
                             options.UseSqlServer(hostContext.Configuration.GetConnectionString("EphItDb"))
