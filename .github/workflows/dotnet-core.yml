@@ -12,5 +12,5 @@ jobs:
     runs-on: self-hosted 
 
     steps:
-      - run: build.cmd
+      - run: cmd /c build.cmd
         name: Build Solution
