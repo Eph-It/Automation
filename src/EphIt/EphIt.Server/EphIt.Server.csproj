@@ -21,9 +21,5 @@
     <ProjectReference Include="..\Classlibraries\EphIt.BL.User\EphIt.BL.User.csproj" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="pwsh.exe -File PreBuild.ps1" />
-  </Target>
-
 
 </Project>
