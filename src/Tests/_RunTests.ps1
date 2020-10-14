@@ -1,7 +1,4 @@
-$BaseURI = 'https://localhost:44354/'
-
-$CurrentSid = ([System.Security.Principal.WindowsIdentity]::GetCurrent()).User.Value
-
+$BaseURI = 'https://localhost:44354'
 
 
 $Tests = Get-ChildItem $PSScriptRoot -Filter '*.tests.ps1'
