@@ -6,23 +6,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using EphIt.Service.Services.Agent;
-using EphIt.Service.Services.JobManager;
-using EphIt.Service.Services.RunspaceManager;
+using EphIt.Service.Posh.Job;
+using EphIt.Service.Posh;
 
 namespace EphIt.Service.Workers
 {
     class MonitorRunningJobsWorker : BackgroundService
     {
         private readonly ILogger<StartPendingJobsWorker> _logger;
-        private IRunspaceManager _runspaceManager;
-        private IPSAgent _psAgent;
+        private IPoshManager _poshManager;
 
-        public MonitorRunningJobsWorker(ILogger<StartPendingJobsWorker> logger, IRunspaceManager pSRunspace, IPSAgent pSAgent)
+        public MonitorRunningJobsWorker(ILogger<StartPendingJobsWorker> logger, IPoshManager poshManager)
         {
-            _runspaceManager = pSRunspace;
+            _poshManager = poshManager;
             _logger = logger;
-            _psAgent = pSAgent;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
