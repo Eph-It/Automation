@@ -8,16 +8,16 @@ using EphIt.Service.Services.Agent;
 using EphIt.Service.Services.JobManager;
 using EphIt.Service.Services.RunspaceManager;
 using System.Management.Automation;
+using EphIt.BL.JobManager;
 
 namespace EphIt.Service.Services.JobManager
 {
-    public class JobManager : IJobManager
+    public class PowerShellJobManager : IPowerShellJobManagerJobManager
     {
         private ConcurrentQueue<PoshJob> _jobQueue = new ConcurrentQueue<PoshJob>();
         private List<Task<PSDataCollection<PSObject>>> runningJobs = new List<Task<PSDataCollection<PSObject>>>();
         private IRunspaceManager _runspaceManager;
-
-        public JobManager(IRunspaceManager runspaceManager)
+        public PowerShellJobManager(IRunspaceManager runspaceManager)
         {
             _runspaceManager = runspaceManager;
         }

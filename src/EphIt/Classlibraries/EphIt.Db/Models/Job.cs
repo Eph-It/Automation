@@ -17,18 +17,21 @@ namespace EphIt.Db.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid JobUid { get; set; }
-        public int ScriptId { get; set; }
+        public int ScriptVersionId { get; set; }
         public short JobStatusId { get; set; }
-        public int CreatedByUserId { get; set; }
+        public int? CreatedByUserId { get; set; }
+        public int? CreatedByScheduleId { get; set; }
+        public int? CreatedByAutomationId { get; set; }
         public DateTime Created { get; set; }
-        public DateTime? Finished { get; set; }
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        public DateTime? Start { get; set; }
+        public DateTime? Finish { get; set; }
 
         public virtual User CreatedByUser { get; set; }
         public virtual JobStatus JobStatus { get; set; }
-        public virtual Script Script { get; set; }
+        public virtual ScriptVersion ScriptVersion { get; set; }
         public virtual ICollection<JobLog> JobLog { get; set; }
+        public virtual JobQueue JobQueue { get; set; }
+        public virtual JobParameters JobParameters { get; set; }
     }
     public class JobConfiguration : IEntityTypeConfiguration<Job>
     {
@@ -41,11 +44,11 @@ namespace EphIt.Db.Models
                 .WithMany(p => p.Job)
                 .HasForeignKey(key => key.JobStatusId)
                 .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(d => d.Script)
-                .WithMany(p => p.Job)
-                .HasForeignKey(key => key.ScriptId)
+            builder.HasOne(d => d.ScriptVersion)
+                .WithMany(p => p.Jobs)
+                .HasForeignKey(key => key.ScriptVersionId)
                 .OnDelete(DeleteBehavior.Restrict);
-
+           
         }
     }
 }

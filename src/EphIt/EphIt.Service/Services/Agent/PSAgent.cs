@@ -17,8 +17,8 @@ namespace EphIt.Service.Services.Agent
     public class PSAgent : IPSAgent
     {
         private IRunspaceManager _runspaceManager;
-        private IJobManager _jobManager;
-        public PSAgent(IRunspaceManager runspaceManager, IJobManager jobManager)
+        private IPowerShellJobManagerJobManager _jobManager;
+        public PSAgent(IRunspaceManager runspaceManager, IPowerShellJobManagerJobManager jobManager)
         {
             _runspaceManager = runspaceManager;
             _jobManager = jobManager;

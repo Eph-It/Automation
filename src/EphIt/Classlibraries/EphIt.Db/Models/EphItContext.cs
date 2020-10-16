@@ -18,6 +18,8 @@ namespace EphIt.Db.Models
         public virtual DbSet<Authentication> Authentication { get; set; }
         public virtual DbSet<Job> Job { get; set; }
         public virtual DbSet<JobLog> JobLog { get; set; }
+        public virtual DbSet<JobParameters> JobParameters { get; set; }
+        public virtual DbSet<JobQueue> JobQueue { get; set; }
         public virtual DbSet<JobStatus> JobStatus { get; set; }
         public virtual DbSet<RbacAction> RbacAction { get; set; }
         public virtual DbSet<RbacObject> RbacObject { get; set; }

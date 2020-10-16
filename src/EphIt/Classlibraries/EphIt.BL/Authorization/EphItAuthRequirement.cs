@@ -17,8 +17,8 @@ namespace EphIt.BL.Authorization
     public class EphItAuthRequirement : IAuthorizationRequirement
     {
         public RBACActionEnum RBACAction { get; set; }
-        public RBACObjectsId RBACObject { get; set; }
-        public EphItAuthRequirement(RBACActionEnum rbacAction, RBACObjectsId objectId)
+        public RBACObjectEnum RBACObject { get; set; }
+        public EphItAuthRequirement(RBACActionEnum rbacAction, RBACObjectEnum objectId)
         {
             RBACAction = rbacAction;
             RBACObject = objectId;
@@ -69,7 +69,7 @@ namespace EphIt.BL.Authorization
 
             switch (requirement.RBACObject)
             {
-                case RBACObjectsId.Scripts:
+                case RBACObjectEnum.Scripts:
                     if(objectId != null)
                     {
                         authObjects = await _userAuth.GetAuthorizedScripts((int)objectId, requirement.RBACAction);

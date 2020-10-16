@@ -12,19 +12,19 @@ namespace EphIt.Db.Models
         public VMJob(Job obj)
         {
             JobUid = obj.JobUid;
-            ScriptId = obj.ScriptId;
+            ScriptVersionId = obj.ScriptVersionId;
             JobStatusId = obj.JobStatusId;
             CreatedByUserId = obj.CreatedByUserId;
             Created = obj.Created;
-            Finished = obj.Finished;
+            Finish = obj.Finish;
         }
 
         public Guid JobUid { get; set; }
-        public int ScriptId { get; set; }
+        public int ScriptVersionId { get; set; }
         public short JobStatusId { get; set; }
-        public int CreatedByUserId { get; set; }
+        public int? CreatedByUserId { get; set; }
         public DateTime Created { get; set; }
-        public DateTime? Finished { get; set; }
+        public DateTime? Finish { get; set; }
 
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EphIt.Service.Services.JobManager
 {
-    public interface IJobManager
+    public interface IPowerShellJobManagerJobManager
     {
         public void QueueJob(PoshJob pSJob);
         public PoshJob DequeueJob();

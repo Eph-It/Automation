@@ -68,7 +68,7 @@ namespace EphIt.BL.Script
             var userRoleId = await _dbContext.RoleObjectAction
                                 .Where(p => 
                                     p.RbacActionId.Equals((short)RBACActionEnum.Create) 
-                                    && p.RbacObjectId.Equals((short)RBACObjectsId.Scripts)
+                                    && p.RbacObjectId.Equals((short)RBACObjectEnum.Scripts)
                                     && p.Role.RoleMembershipUser.Where(us => us.UserId.Equals(userId)).Any()
                                 )
                                 .Select(p => p.RoleId)
@@ -96,7 +96,7 @@ namespace EphIt.BL.Script
         public async Task AssociateWithRoleAsync(int scriptId, int roleId)
         {
             if(!await _dbContext.RoleObjectAction
-                    .Where(p => p.RbacObjectId.Equals((short)RBACObjectsId.Scripts) && p.RoleId.Equals(roleId))
+                    .Where(p => p.RbacObjectId.Equals((short)RBACObjectEnum.Scripts) && p.RoleId.Equals(roleId))
                     .AnyAsync()
             )
             {
