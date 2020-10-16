@@ -13,11 +13,11 @@ namespace EphIt.Service.Workers
     public class StartPendingJobsWorker : BackgroundService
     {
         private readonly ILogger<StartPendingJobsWorker> _logger;
-        private IJobManager _jobManager;
-        public StartPendingJobsWorker(ILogger<StartPendingJobsWorker> logger, IJobManager jobManager)
+        private IPoshJobManager _poshJobManager;
+        public StartPendingJobsWorker(ILogger<StartPendingJobsWorker> logger, IPoshJobManager poshJobManager)
         {
             _logger = logger;
-            _jobManager = jobManager;
+            _poshJobManager = poshJobManager;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -43,7 +43,7 @@ namespace EphIt.Service.Workers
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                _jobManager.StartPendingJob();
+                _poshJobManager.StartPendingJob();
                 await Task.Delay(1000, stoppingToken);
             }
         }
