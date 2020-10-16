@@ -50,10 +50,10 @@ namespace EphIt.Blazor.Server
             services.AddScoped<IAuditLogger, AuditLogger>();
             services.AddAuthorization(options => 
             {
-                options.AddPolicy("ScriptEdit", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Modify, RBACObjectsId.Scripts)));
-                options.AddPolicy("Script", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Read, RBACObjectsId.Scripts)));
-                options.AddPolicy("ScriptRead", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Read, RBACObjectsId.Scripts)));
-                options.AddPolicy("ScriptDelete", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Delete, RBACObjectsId.Scripts)));
+                options.AddPolicy("ScriptEdit", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Modify, RBACObjectEnum.Scripts)));
+                options.AddPolicy("Script", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Read, RBACObjectEnum.Scripts)));
+                options.AddPolicy("ScriptRead", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Read, RBACObjectEnum.Scripts)));
+                options.AddPolicy("ScriptDelete", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Delete, RBACObjectEnum.Scripts)));
             });
             services.AddTransient<IAuthorizationHandler, EphItAuthRequirementHandler>();
         }

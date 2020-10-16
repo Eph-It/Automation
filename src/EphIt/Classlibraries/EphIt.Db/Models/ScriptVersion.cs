@@ -8,6 +8,10 @@ namespace EphIt.Db.Models
 {
     public class ScriptVersion
     {
+        public ScriptVersion()
+        {
+            Jobs = new HashSet<Job>();
+        }
         public int ScriptVersionId { get; set; }
         [Required]
         public string Body { get; set; }
@@ -21,6 +25,7 @@ namespace EphIt.Db.Models
         public virtual User CreatedByUser { get; set; }
         public virtual Script Script { get; set; }
         public virtual ScriptLanguage ScriptLanguage { get; set; }
+        public virtual ICollection<Job> Jobs { get; set; }
     }
     public class ScriptVersionConfiguration : IEntityTypeConfiguration<ScriptVersion>
     {

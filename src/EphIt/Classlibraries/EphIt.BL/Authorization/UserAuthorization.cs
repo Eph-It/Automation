@@ -74,7 +74,7 @@ namespace EphIt.BL.Authorization
                                 p.Role.RoleObjectScopeScript.Where(script => script.ScriptId.Equals(scriptId.Value)).Any() : 
                                 p.Role.RoleObjectScopeScript.Any())
                             )
-                        && p.Role.RoleObjectAction.Where(d => d.RbacActionId == (short)action && d.RbacObjectId == (short)RBACObjectsId.Scripts).Any()
+                        && p.Role.RoleObjectAction.Where(d => d.RbacActionId == (short)action && d.RbacObjectId == (short)RBACObjectEnum.Scripts).Any()
                     );
             }
             else
@@ -86,7 +86,7 @@ namespace EphIt.BL.Authorization
                                 p.Role.RoleObjectScopeScript.Where(script => script.ScriptId.Equals(scriptId.Value)).Any() :
                                 p.Role.RoleObjectScopeScript.Any())
                             )
-                        && p.Role.RoleObjectAction.Where(d => d.RbacObjectId == (short)RBACObjectsId.Scripts).Any()
+                        && p.Role.RoleObjectAction.Where(d => d.RbacObjectId == (short)RBACObjectEnum.Scripts).Any()
                     );
             }
             var roles = await roleMembershipQuery.Include(p => p.Role)

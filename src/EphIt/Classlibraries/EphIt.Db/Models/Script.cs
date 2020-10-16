@@ -11,7 +11,6 @@ namespace EphIt.Db.Models
     {
         public Script()
         {
-            Job = new HashSet<Job>();
             RoleObjectScopeScript = new HashSet<RoleObjectScopeScript>();
             ScriptVersion = new HashSet<ScriptVersion>();
         }
@@ -32,7 +31,6 @@ namespace EphIt.Db.Models
 
         public virtual User CreatedByUser { get; set; }
         public virtual User ModifiedByUser { get; set; }
-        public virtual ICollection<Job> Job { get; set; }
         public virtual ICollection<RoleObjectScopeScript> RoleObjectScopeScript { get; set; }
         public virtual ICollection<ScriptVersion> ScriptVersion { get; set; }
     }
