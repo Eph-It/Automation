@@ -16,7 +16,6 @@ using EphIt.Service.Posh.Job;
 using EphIt.Service.Posh;
 using EphIt.Service.Posh.Stream;
 using EphIt.Service.Workers;
-using EphIt.BL.JobManager;
 
 namespace EphIt.Service
 {
