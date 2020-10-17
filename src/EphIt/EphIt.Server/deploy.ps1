@@ -20,9 +20,9 @@ if(Test-Path $PoolPath){
 if(Test-Path $SitePath){
     $null = Stop-Website -Name $SiteName
 }
-
+$null = Remove-Item $PhysicalPath -Force -Recurse 
 $null = New-Item $PhysicalPath -ItemType Directory -Force
-$null = Copy-Item $PSScriptRoot $PhysicalPath -Force
+$null = Copy-Item "$PSScriptRoot\*" "$PhysicalPath" -Recurse -Force
 
 if( -Not (Test-Path $PoolPath))
 {
