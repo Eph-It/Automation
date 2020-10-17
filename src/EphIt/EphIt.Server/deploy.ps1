@@ -13,6 +13,7 @@ Import-Module WebAdministration -Force
 $SitePath = "IIS:\Sites\$SiteName"
 $PoolPath = "IIS:\AppPools\$AppPoolName"
 
+$ErrorActionPreference = 'SilentlyContinue'
 if(Test-Path $PoolPath){
     $null = Stop-WebAppPool -Name $AppPoolName
 }
@@ -20,6 +21,7 @@ if(Test-Path $PoolPath){
 if(Test-Path $SitePath){
     $null = Stop-Website -Name $SiteName
 }
+$ErrorActionPreference = 'Stop'
 $null = Remove-Item $PhysicalPath -Force -Recurse 
 $null = New-Item $PhysicalPath -ItemType Directory -Force
 $null = Copy-Item "$PSScriptRoot\*" "$PhysicalPath" -Recurse -Force
