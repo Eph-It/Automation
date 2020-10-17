@@ -35,7 +35,6 @@ namespace EphIt.Blazor.Server
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
                 });
     }
