@@ -15,6 +15,7 @@ namespace EphIt.Db.Models
         public Guid JobUid { get; set; }
         public string Parameters { get; set; }
 
+        [ForeignKey("JobUid")]
         public virtual Job Job { get; set; }
     }
     public class JobParametersConfiguration : IEntityTypeConfiguration<JobParameters>

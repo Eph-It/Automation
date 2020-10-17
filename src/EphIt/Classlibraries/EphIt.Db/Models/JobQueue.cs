@@ -18,7 +18,7 @@ namespace EphIt.Db.Models
         public DateTime Created { get; set; }
         [Timestamp]
         public byte[] RowVersion { get; set; }
-
+        [ForeignKey("JobUid")]
         public virtual Job Job { get; set; }
     }
     public class JobQueueConfiguration : IEntityTypeConfiguration<JobQueue>
