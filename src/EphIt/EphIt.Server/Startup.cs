@@ -16,7 +16,7 @@ using EphIt.BL.Authorization;
 using EphIt.BL.User;
 using EphIt.BL.Script;
 using EphIt.BL.Audit;
-
+using Microsoft.AspNetCore.Server.IIS;
 
 namespace EphIt.Blazor.Server
 {
@@ -33,7 +33,11 @@ namespace EphIt.Blazor.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AutomaticAuthentication = true;
+            });
+            services.AddAuthentication(IISServerDefaults.AuthenticationScheme);
             AppDomain.CurrentDomain.ProcessExit += (s, e) => Log.CloseAndFlush();
             services.AddSingleton(Log.Logger);
 
