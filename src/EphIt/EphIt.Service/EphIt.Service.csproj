@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Classlibraries\EphIt.BL\EphIt.BL.csproj" />
+    <ProjectReference Include="..\Classlibraries\EphIt.Db.Models\EphIt.Db.Models.csproj" />
     <ProjectReference Include="..\Classlibraries\EphIt.Db\EphIt.Db.csproj" />
   </ItemGroup>
 </Project>
