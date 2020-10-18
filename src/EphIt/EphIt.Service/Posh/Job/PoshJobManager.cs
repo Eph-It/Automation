@@ -23,10 +23,10 @@ namespace EphIt.Service.Posh.Job
         private IPoshManager _poshManager;
         private IStreamHelper _streamHelper;
         private IJobManager _jobManager;
-        public PoshJobManager(IPoshManager runspaceManager, IStreamHelper streamHelper, IJobManager jobManager)
+        public PoshJobManager(IPoshManager poshManager, IStreamHelper streamHelper, IJobManager jobManager)
         {
             _jobManager = jobManager;
-            _poshManager = runspaceManager;
+            _poshManager = poshManager;
             _streamHelper = streamHelper;
         }
         public void ProcessRunningJobs()
