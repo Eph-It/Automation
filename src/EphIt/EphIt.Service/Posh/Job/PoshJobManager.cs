@@ -10,10 +10,11 @@ using EphIt.Service.Posh;
 using System.Management.Automation;
 using System.Linq;
 using Serilog;
+using EphIt.BL.JobManager;
 
 namespace EphIt.Service.Posh.Job
 {
-    public class JobManager : IJobManager
+    public class PoshJobManager : IPoshJobManager
     {
         private ConcurrentQueue<PoshJob> jobQueue = new ConcurrentQueue<PoshJob>();
         private ConcurrentQueue<ProblemJob> problemJobs = new ConcurrentQueue<ProblemJob>();
@@ -21,9 +22,10 @@ namespace EphIt.Service.Posh.Job
         private ConcurrentQueue<Task<PSDataCollection<PSObject>>> runningJobs = new ConcurrentQueue<Task<PSDataCollection<PSObject>>>();
         private IPoshManager _poshManager;
         private IStreamHelper _streamHelper;
-
-        public JobManager(IPoshManager runspaceManager, IStreamHelper streamHelper)
+        private IJobManager _jobManager;
+        public PoshJobManager(IPoshManager runspaceManager, IStreamHelper streamHelper, IJobManager jobManager)
         {
+            _jobManager = jobManager;
             _poshManager = runspaceManager;
             _streamHelper = streamHelper;
         }
@@ -56,6 +58,7 @@ namespace EphIt.Service.Posh.Job
         }
         public void StartPendingJob()
         {   
+            
             if(!HasPendingJob())
             {
                 return;

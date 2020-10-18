@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EphIt.Service.Posh.Job
 {
-    public interface IJobManager
+    public interface IPoshJobManager
     {
         public void QueueJob(PoshJob pSJob);
         public PoshJob DequeueJob();
