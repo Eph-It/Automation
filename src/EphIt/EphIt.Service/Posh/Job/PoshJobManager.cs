@@ -22,10 +22,10 @@ namespace EphIt.Service.Posh.Job
         private ConcurrentQueue<Task<PSDataCollection<PSObject>>> runningJobs = new ConcurrentQueue<Task<PSDataCollection<PSObject>>>();
         private IPoshManager _poshManager;
         private IStreamHelper _streamHelper;
-        private IJobManager _jobManager;
-        public PoshJobManager(IPoshManager poshManager, IStreamHelper streamHelper, IJobManager jobManager)
+        //private EphIt.BL.JobManager.IJobManager _jobManager;
+        public PoshJobManager(IPoshManager poshManager, IStreamHelper streamHelper)
         {
-            _jobManager = jobManager;
+            //_jobManager = jobManager;
             _poshManager = poshManager;
             _streamHelper = streamHelper;
         }
@@ -33,6 +33,8 @@ namespace EphIt.Service.Posh.Job
         {
             foreach(var job in runningJobs)
             {
+                var status = job.Status;
+                var x= job.Result;
                 //record any more output
                 //done?  record end date, remove from list
                 //error?

@@ -1,28 +1,30 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation.Runspaces;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using EphIt.Service.Posh.Job;
 
+
+//this is debug stuff
 namespace EphIt.Service.Workers
 {
-    public class StartPendingJobsWorker : BackgroundService
+    class CreateJobsWorker : BackgroundService
     {
         private readonly ILogger<StartPendingJobsWorker> _logger;
         private IPoshJobManager _poshJobManager;
-        public StartPendingJobsWorker(ILogger<StartPendingJobsWorker> logger, IPoshJobManager poshJobManager)
+
+        public CreateJobsWorker(ILogger<StartPendingJobsWorker> logger, IPoshJobManager poshJobManager)
         {
-            _logger = logger;
             _poshJobManager = poshJobManager;
+            _logger = logger;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Service Starting");            
+            _logger.LogInformation("Service Starting");
             return base.StartAsync(cancellationToken);
         }
 
@@ -42,10 +44,13 @@ namespace EphIt.Service.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Starting Pending Jobs running at: {time}", DateTimeOffset.Now);
-                _poshJobManager.StartPendingJob();
-                await Task.Delay(10000, stoppingToken);
+                _logger.LogInformation("Monitor Running Jobs at: {time}", DateTimeOffset.Now);
+                PoshJob job1 = new PoshJob();
+                job1.Script = "$verbosePreference = 'continue'; Write-Verbose '123'; Write-Error '123'";
+                _poshJobManager.QueueJob(job1);
+                await Task.Delay(20000, stoppingToken);
             }
         }
     }
 }
+

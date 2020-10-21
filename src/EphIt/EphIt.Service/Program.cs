@@ -62,13 +62,14 @@ namespace EphIt.Service
                     services.AddSingleton<IStreamHelper, StreamHelper>();
                     services.AddSingleton<IPoshManager, PoshManager>();
                     services.AddSingleton<IPoshJobManager, PoshJobManager>();
-                    services.AddSingleton<IJobManager, JobManager>();
+                    services.AddScoped<IJobManager, JobManager>();
                     services.AddDbContext<EphItContext>(
                         options =>
                             options.UseSqlServer(hostContext.Configuration.GetConnectionString("EphItDb"))
                         );
                     services.AddHostedService<StartPendingJobsWorker>();
                     services.AddHostedService<MonitorRunningJobsWorker>();
+                    //services.AddHostedService<CreateJobsWorker>();
                 })
             .UseSerilog();
     }

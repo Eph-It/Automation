@@ -14,11 +14,11 @@ namespace EphIt.Service.Workers
     class MonitorRunningJobsWorker : BackgroundService
     {
         private readonly ILogger<StartPendingJobsWorker> _logger;
-        private IPoshManager _poshManager;
+        private IPoshJobManager _poshJobManager;
 
-        public MonitorRunningJobsWorker(ILogger<StartPendingJobsWorker> logger, IPoshManager poshManager)
+        public MonitorRunningJobsWorker(ILogger<StartPendingJobsWorker> logger, IPoshJobManager poshJobManager)
         {
-            _poshManager = poshManager;
+            _poshJobManager = poshJobManager;
             _logger = logger;
         }
 
@@ -44,9 +44,9 @@ namespace EphIt.Service.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                //do work here
-                await Task.Delay(1000, stoppingToken);
+                _logger.LogInformation("Monitor Running Jobs at: {time}", DateTimeOffset.Now);
+                _poshJobManager.ProcessRunningJobs();
+                await Task.Delay(2000, stoppingToken);
             }
         }
     }
