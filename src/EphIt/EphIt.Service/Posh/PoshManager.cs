@@ -119,7 +119,24 @@ namespace EphIt.Service.Posh
             };
             return ps;
         }
-        public async Task<PSDataCollection<PSObject>> RunJob(PoshJob poshJob)
+        public PoshJob RunJob(PoshJob poshJob)
+        {
+            PowerShell ps = GetPosh(poshJob);
+            if (ps == null)
+            {
+                Log.Warning("All PowerShell instances are in use.");
+                return null;
+            }
+            if (poshJob.Parameters.Count != 0)
+            {
+                ps.AddParameters(poshJob.Parameters);
+            }
+            poshJob.PoshInstance = ps;
+            poshJob.RunningJob = StartScript(poshJob, ps);
+            return poshJob;
+        }
+        
+        public async Task<PSDataCollection<PSObject>> StartScript(PoshJob poshJob, PowerShell powershell) //maybe add withRunspace parameter in the future. I have no idea what a runspace provides.
         {
             //Runspace rs = GetRunspace();
             //if(rs == null)
@@ -127,15 +144,14 @@ namespace EphIt.Service.Posh
                 //log here
             //    return null;
             //}
-            PowerShell ps = GetPosh(poshJob);
-            if(ps == null)
-            {
-                return null;
-            }
-            return await ps.InvokeAsync();
+            return await powershell.InvokeAsync();
             //return ps.InvokeAsync<PSDataCollection<PSObject>>(new PSDataCollection<PSDataCollection<PSObject>>());
         }
         public bool RunspaceAvailable()
+        {
+            return !_runspaceQueue.IsEmpty;
+        }
+        public bool PowerShellAvailable()
         {
             return !_runspaceQueue.IsEmpty;
         }

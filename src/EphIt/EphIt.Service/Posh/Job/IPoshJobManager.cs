@@ -9,8 +9,8 @@ namespace EphIt.Service.Posh.Job
 {
     public interface IPoshJobManager
     {
-        public void QueueJob(PoshJob pSJob);
-        public PoshJob DequeueJob();
+        public void QueuePendingJob(PoshJob pSJob);
+        public PoshJob DequeuePendingJob();
         public bool HasPendingJob();
         public void StartPendingJob();
         public void ProcessRunningJobs();
