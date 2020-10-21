@@ -33,7 +33,7 @@ namespace EphIt.Service.Tests
             ephItContext = new EphItContext();
             logger = new Mock<ILogger<EphIt.BL.JobManager.JobManager>>();
             jobManager = new EphIt.BL.JobManager.JobManager(ephItContext, logger.Object);
-            poshJobManager = new PoshJobManager(poshManager, realStream);
+            poshJobManager = new PoshJobManager(poshManager);
             job = new PoshJob();
             job.Script = "$VerbosePreference = 'Continue'; Get-Module; Write-Verbose '123'; write-debug '123'; write-error '123'; start-sleep 300";
         }
@@ -46,7 +46,7 @@ namespace EphIt.Service.Tests
         {
             bool hasJob = poshJobManager.HasPendingJob();
             Assert.IsFalse(hasJob);
-            poshJobManager.QueueJob(job);
+            poshJobManager.QueuePendingJob(job);
             hasJob = poshJobManager.HasPendingJob();
             Assert.IsTrue(hasJob);
         }
@@ -56,7 +56,7 @@ namespace EphIt.Service.Tests
         {
             bool hasJob = poshJobManager.HasPendingJob();
             Assert.IsFalse(hasJob);
-            poshJobManager.QueueJob(this.job);
+            poshJobManager.QueuePendingJob(this.job);
             hasJob = poshJobManager.HasPendingJob();
             Assert.IsTrue(hasJob);
 
@@ -64,7 +64,7 @@ namespace EphIt.Service.Tests
             PoshJob job = null;  
             if (hasJob)
             {
-                job = poshJobManager.DequeueJob();
+                job = poshJobManager.DequeuePendingJob();
             }
             Assert.IsNotNull(job);
             hasJob = poshJobManager.HasPendingJob();
@@ -75,7 +75,7 @@ namespace EphIt.Service.Tests
         {
             bool hasJob = poshJobManager.HasPendingJob();
             Assert.IsFalse(hasJob);
-            poshJobManager.QueueJob(this.job);
+            poshJobManager.QueuePendingJob(this.job);
             hasJob = poshJobManager.HasPendingJob();
             Assert.IsTrue(hasJob);
 
@@ -85,7 +85,7 @@ namespace EphIt.Service.Tests
         }
         private void StartJob()
         {
-            poshJobManager.QueueJob(this.job);
+            poshJobManager.QueuePendingJob(this.job);
             poshJobManager.StartPendingJob();
         }
         /* unsure how to test this
