@@ -42,9 +42,9 @@ namespace EphIt.Service.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                _logger.LogInformation("Starting Pending Jobs running at: {time}", DateTimeOffset.Now);
                 _poshJobManager.StartPendingJob();
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(10000, stoppingToken);
             }
         }
     }

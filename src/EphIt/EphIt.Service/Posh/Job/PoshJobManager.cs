@@ -16,36 +16,63 @@ namespace EphIt.Service.Posh.Job
 {
     public class PoshJobManager : IPoshJobManager
     {
-        private ConcurrentQueue<PoshJob> jobQueue = new ConcurrentQueue<PoshJob>();
+        private ConcurrentQueue<PoshJob> pendingJobQueue = new ConcurrentQueue<PoshJob>();
         private ConcurrentQueue<ProblemJob> problemJobs = new ConcurrentQueue<ProblemJob>();
         private ConcurrentQueue<PoshJob> retryJobs = new ConcurrentQueue<PoshJob>();
-        private ConcurrentQueue<Task<PSDataCollection<PSObject>>> runningJobs = new ConcurrentQueue<Task<PSDataCollection<PSObject>>>();
+        private ConcurrentDictionary<Guid, PoshJob> runningJobs = new ConcurrentDictionary<Guid, PoshJob>();
         private IPoshManager _poshManager;
-        private IStreamHelper _streamHelper;
-        private IJobManager _jobManager;
-        public PoshJobManager(IPoshManager poshManager, IStreamHelper streamHelper, IJobManager jobManager)
+        //private EphIt.BL.JobManager.IJobManager _jobManager;
+        public PoshJobManager(IPoshManager poshManager)
         {
-            _jobManager = jobManager;
+            //_jobManager = jobManager;
             _poshManager = poshManager;
-            _streamHelper = streamHelper;
         }
         public void ProcessRunningJobs()
         {
-            foreach(var job in runningJobs)
+            foreach(var runningJob in runningJobs)
             {
+                var jobTask = runningJob.Value.RunningJob;
+                var poshInstance = runningJob.Value.PoshInstance;
+                if(jobTask.Status == TaskStatus.RanToCompletion)
+                {
+                    _poshManager.RetirePowerShell(poshInstance);
+                    RemoveRunningJob(runningJob);
+                }
                 //record any more output
                 //done?  record end date, remove from list
                 //error?
             }
         }
-        public void QueueJob(PoshJob job)
-        {
-            jobQueue.Enqueue(job);
-        }
-        public PoshJob DequeueJob()
+        public void RemoveRunningJob(KeyValuePair<Guid, PoshJob> runningJob)
         {
             PoshJob result;
-            jobQueue.TryDequeue(out result);
+            runningJobs.Remove(runningJob.Key, out result);
+            if (result == null) //cound not remove.  Is it already gone?
+            {
+                runningJobs.TryGetValue(runningJob.Key, out result);
+            }
+            else
+            {
+                return;
+            }
+            if (result != null) //its still there
+            {
+                runningJobs.Remove(runningJob.Key, out result);
+            }
+            if (result == null) //could not remove
+            {
+                //i dont know what to do here.
+            }
+            return;
+        }
+        public void QueuePendingJob(PoshJob job)
+        {
+            pendingJobQueue.Enqueue(job);
+        }
+        public PoshJob DequeuePendingJob()
+        {
+            PoshJob result;
+            pendingJobQueue.TryDequeue(out result);
             if (result == null)
             {
                 return null;
@@ -54,7 +81,7 @@ namespace EphIt.Service.Posh.Job
         }
         public bool HasPendingJob()
         {
-            return !jobQueue.IsEmpty;
+            return !pendingJobQueue.IsEmpty;
         }
         public void StartPendingJob()
         {   
@@ -63,26 +90,31 @@ namespace EphIt.Service.Posh.Job
             {
                 return;
             }
-            if(!_poshManager.RunspaceAvailable())
+            /*if(!_poshManager.RunspaceAvailable())
             {
                 return;
-            }
+            }*/
             PoshJob pendingJob;
-            jobQueue.TryDequeue(out pendingJob);
+            pendingJobQueue.TryDequeue(out pendingJob);
             if(pendingJob == null)
             {
                 return;
             }
             try
             {
-                var runningJob = _poshManager.RunJob(pendingJob);
+                PoshJob runningJob = _poshManager.RunJob(pendingJob);
                 if (runningJob == null)
                 {
                     retryJobs.Enqueue(pendingJob);
                 }
                 else
                 {
-                    runningJobs.Enqueue(runningJob);
+                    bool success = runningJobs.TryAdd(Guid.NewGuid(), runningJob);
+                    if(!success) 
+                    {
+                        //this is bad and hopefully never happens.
+                        Log.Error("Unable to queue the running job, this job will not be monitored.");
+                    }
                 }
             }
             catch (Exception e)
