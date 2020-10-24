@@ -8,6 +8,7 @@ namespace EphIt.Service
 {
     public class PoshJob
     {
+        public Guid JobUID { get; set; }
         public string Script { get; set; }
         public Dictionary<string, object> Parameters { get; set; }
         public Task<PSDataCollection<PSObject>> RunningJob { get; set; }
