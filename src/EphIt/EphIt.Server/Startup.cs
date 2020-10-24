@@ -16,7 +16,9 @@ using EphIt.BL.Authorization;
 using EphIt.BL.User;
 using EphIt.BL.Script;
 using EphIt.BL.Audit;
+using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Server.IIS;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace EphIt.Blazor.Server
 {
@@ -33,7 +35,15 @@ namespace EphIt.Blazor.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            var configSection = Configuration.GetSection("EphItSettings");
+            if(!String.IsNullOrEmpty(configSection["AzureADAuthentication"]))
+            {
+                if(configSection["AzureADAuthentication"] == "true")
+                {
+                    services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                        .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAdApp"));
+                }
+            }
             AppDomain.CurrentDomain.ProcessExit += (s, e) => Log.CloseAndFlush();
             services.AddSingleton(Log.Logger);
 
@@ -90,6 +100,7 @@ namespace EphIt.Blazor.Server
             app.UseSerilogRequestLogging();
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
