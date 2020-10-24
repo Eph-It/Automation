@@ -12,7 +12,13 @@ namespace EphIt.Service.Posh
         public Runspace GetRunspace();
         public void RetireRunspace(Runspace runspace);
         public int GetNumberOfRemainingRunspaces();
-        public Task<PSDataCollection<PSObject>> RunJob(PoshJob poshJob);
+        public PoshJob RunJob(PoshJob poshJob);
         public bool RunspaceAvailable();
+        public PowerShell NewPowerShell();
+        public PowerShell GetPowerShell();
+        public void RetirePowerShell(PowerShell powershell);
+        public int GetNumberOfRemainingPowerShell();
+
+
     }
 }
