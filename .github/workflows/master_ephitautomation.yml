@@ -27,7 +27,7 @@ jobs:
       working-directory: src\EphIt
 
     - name: dotnet publish
-      run: dotnet publish -c Release --self-contained true -o ${{env.DOTNET_ROOT}}/EphItAutomation
+      run: dotnet publish -c Release --no-build --self-contained true -o ${{env.DOTNET_ROOT}}/EphItAutomation
       working-directory: src\EphIt
 
     - name: Deploy to Azure Web App
