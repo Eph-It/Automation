@@ -31,7 +31,6 @@ jobs:
       working-directory: src\EphIt
 
     - name: Deploy to Azure Web App
-      working-directory: src\EphIt
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'ephitautomation'
