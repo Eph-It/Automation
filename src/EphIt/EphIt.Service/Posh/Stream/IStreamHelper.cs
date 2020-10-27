@@ -5,6 +5,7 @@ using System.Management.Automation;
 namespace EphIt.Service.Posh.Stream
 {
     public interface IStreamHelper {
-        void RecordStream(PoshJob poshJob, object sender, DataAddedEventArgs e);
+        public void RecordStream(PoshJob poshJob, object sender, DataAddedEventArgs e);
+        public void RecordOutput(PoshJob poshJob, object sender, DataAddedEventArgs e);
     }
 }
