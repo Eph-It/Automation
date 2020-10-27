@@ -79,8 +79,6 @@ namespace EphIt.Service.Tests
             hasJob = poshJobManager.HasPendingJob();
             Assert.IsTrue(hasJob);
 
-            //the runspace needs to have commands added.
-            //bug must be fixed.
             poshJobManager.StartPendingJob();
         }
         private void StartJob()

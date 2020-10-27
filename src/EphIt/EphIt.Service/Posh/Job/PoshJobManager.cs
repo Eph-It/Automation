@@ -37,6 +37,11 @@ namespace EphIt.Service.Posh.Job
                 {
                     _poshManager.RetirePowerShell(poshInstance);
                     RemoveRunningJob(runningJob);
+                    Log.Information($"Job {runningJob.Key} has completed.");
+                }
+                if (jobTask.Status == TaskStatus.Faulted)
+                {
+                    Log.Warning($"Job {runningJob.Key} faulted.");
                 }
                 //record any more output
                 //done?  record end date, remove from list
@@ -109,7 +114,7 @@ namespace EphIt.Service.Posh.Job
                 }
                 else
                 {
-                    bool success = runningJobs.TryAdd(Guid.NewGuid(), runningJob);
+                    bool success = runningJobs.TryAdd(pendingJob.JobUID, runningJob);
                     if(!success) 
                     {
                         //this is bad and hopefully never happens.

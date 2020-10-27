@@ -69,7 +69,7 @@ namespace EphIt.Service
                         );
                     services.AddHostedService<StartPendingJobsWorker>();
                     services.AddHostedService<MonitorRunningJobsWorker>();
-                    //services.AddHostedService<CreateJobsWorker>();
+                    services.AddHostedService<CreateJobsWorker>();
                 })
             .UseSerilog();
     }

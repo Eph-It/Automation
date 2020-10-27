@@ -25,7 +25,7 @@ namespace EphIt.Service.Workers
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Service Starting");
+            //_logger.LogInformation("Service Starting");
             return base.StartAsync(cancellationToken);
         }
 
@@ -45,13 +45,14 @@ namespace EphIt.Service.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Monitor Running Jobs at: {time}", DateTimeOffset.Now);
+                //_logger.LogInformation("Monitor Running Jobs at: {time}", DateTimeOffset.Now);
                 PoshJob job1 = new PoshJob();
                 job1.Script = TestScript;
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 parameters.Add("stringParam", "stringValue");
                 parameters.Add("intParam", 1);
                 job1.Parameters = parameters;
+                job1.JobUID = Guid.NewGuid();
                 _poshJobManager.QueuePendingJob(job1);
                 await Task.Delay(10000, stoppingToken);
             }
@@ -61,7 +62,9 @@ param(
     [string]$stringParam,
     [int]$intParam
 )
-$VerbosePreference = continue
+$fileName = [guid]::NewGuid().ToString()
+New-Item -Path c:\temp\$fileName -ItemType File
+$VerbosePreference = 'Continue'
 Write-Verbose -Message 'Verbose Output'
 Write-Debug -Message 'Debug Output'
 Write-Warning -Message 'Warning Output'
@@ -69,7 +72,7 @@ Write-Error -Message 'Error Output'
 Write-Host -Object 'Host Output'
 Write-Output -InputObject 'Output object'
 Write-Output -InputObject([guid]::NewGuid());
-Start-Sleep -Seconds 300            
+Start-Sleep -Seconds 10              
 ";
     }
     
