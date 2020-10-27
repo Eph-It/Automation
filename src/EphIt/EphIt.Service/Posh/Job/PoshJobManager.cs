@@ -43,9 +43,6 @@ namespace EphIt.Service.Posh.Job
                 {
                     Log.Warning($"Job {runningJob.Key} faulted.");
                 }
-                //record any more output
-                //done?  record end date, remove from list
-                //error?
             }
         }
         public void RemoveRunningJob(KeyValuePair<Guid, PoshJob> runningJob)

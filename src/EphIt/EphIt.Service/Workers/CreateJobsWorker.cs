@@ -53,8 +53,11 @@ namespace EphIt.Service.Workers
                 parameters.Add("intParam", 1);
                 job1.Parameters = parameters;
                 job1.JobUID = Guid.NewGuid();
-                _poshJobManager.QueuePendingJob(job1);
-                await Task.Delay(10000, stoppingToken);
+                PoshJob job2 = new PoshJob();
+                job2.Script = TestScript2;
+                job2.JobUID = Guid.NewGuid();
+                _poshJobManager.QueuePendingJob(job2);
+                await Task.Delay(100000, stoppingToken);
             }
         }
         private string TestScript = @"
@@ -63,7 +66,7 @@ param(
     [int]$intParam
 )
 $fileName = [guid]::NewGuid().ToString()
-New-Item -Path c:\temp\$fileName -ItemType File
+$null = New-Item -Path c:\temp\$fileName -ItemType File
 $VerbosePreference = 'Continue'
 Write-Verbose -Message 'Verbose Output'
 Write-Debug -Message 'Debug Output'
@@ -73,6 +76,16 @@ Write-Host -Object 'Host Output'
 Write-Output -InputObject 'Output object'
 Write-Output -InputObject([guid]::NewGuid());
 Start-Sleep -Seconds 10              
+";
+        private string TestScript2 = @"
+$VerbosePreference = 'Continue'
+Write-Verbose 'cash money'
+foreach($i in 1..100) {
+    if($i % 5 -eq 0) {
+        Start-Sleep -Seconds 5
+    }
+    Write-Output $i
+}
 ";
     }
     
