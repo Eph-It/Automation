@@ -30,6 +30,10 @@ jobs:
       run: dotnet publish -c Release --no-build --self-contained true -o ${{env.DOTNET_ROOT}}/EphItAutomation
       working-directory: src\EphIt
 
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
