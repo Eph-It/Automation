@@ -1,0 +1,39 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - ephitautomation
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.102'
+
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+      working-directory: src\EphIt
+
+    - name: dotnet publish
+      run: dotnet publish -c Release --no-build --self-contained true -o ${{env.DOTNET_ROOT}}/EphItAutomation
+      working-directory: src\EphIt
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'ephitautomation'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_49dbcea1dd6e441ba8f601e5d36a2f34 }}
+        package: ${{env.DOTNET_ROOT}}/EphItAutomation 
