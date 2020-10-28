@@ -17,6 +17,7 @@ using EphIt.BL.User;
 using EphIt.BL.Script;
 using EphIt.BL.Audit;
 using Microsoft.AspNetCore.Server.IIS;
+using EphIt.BL.JobManager;
 
 namespace EphIt.Blazor.Server
 {
@@ -48,6 +49,7 @@ namespace EphIt.Blazor.Server
             services.AddScoped<IUserAuthorization, UserAuthorization>();
             services.AddScoped<IScriptManager, ScriptManager>();
             services.AddScoped<IAuditLogger, AuditLogger>();
+            services.AddScoped<IJobManager, JobManager>();
             services.AddAuthorization(options => 
             {
                 options.AddPolicy("ScriptEdit", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Modify, RBACObjectEnum.Scripts)));
