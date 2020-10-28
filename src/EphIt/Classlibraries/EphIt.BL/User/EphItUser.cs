@@ -70,6 +70,10 @@ namespace EphIt.BL.User
         }
         public Db.Models.User Register()
         {
+            if(System.Environment.GetEnvironmentVariable("NOAUTH").Equals("True"))
+            {
+                return _db.User.Where(u => u.UserId == 1).FirstOrDefault();
+            }
             if (!_httpContext.HttpContext.User.Identity.IsAuthenticated)
             {
                 throw new AuthenticationException("User not authenticated");
