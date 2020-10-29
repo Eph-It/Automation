@@ -12,7 +12,7 @@ namespace EphIt.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize("Script")]
+    [Authorize("ScriptsRead")]
     public class ScriptVersionController : ControllerBase
     {
         private IEphItUser _ephItUser;
@@ -50,7 +50,7 @@ namespace EphIt.Server.Controllers
         }
         [HttpPost]
         [Route("Script/{scriptId}/Version")]
-        [Authorize("ScriptEdit")]
+        [Authorize("ScriptsModify")]
         public ScriptVersion New(int scriptId, [FromBody]string body)
         {
             int? maxScriptVersion = _dbContext.ScriptVersion

@@ -11,6 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "http://localhost:60904/api/script",
       "environmentVariables": {
         "ASPNETCORE_DROPDB": "True",
         "ASPNETCORE_ENVIRONMENT": "Development"
