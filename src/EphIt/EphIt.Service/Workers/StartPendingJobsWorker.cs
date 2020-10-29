@@ -22,7 +22,7 @@ namespace EphIt.Service.Workers
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Service Starting");            
+            //_logger.LogInformation("Service Starting");            
             return base.StartAsync(cancellationToken);
         }
 
@@ -42,7 +42,7 @@ namespace EphIt.Service.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Starting Pending Jobs running at: {time}", DateTimeOffset.Now);
+                //_logger.LogInformation("Starting Pending Jobs running at: {time}", DateTimeOffset.Now);
                 _poshJobManager.StartPendingJob();
                 await Task.Delay(10000, stoppingToken);
             }

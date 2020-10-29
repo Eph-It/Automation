@@ -95,11 +95,8 @@ namespace EphIt.Service.Posh
         {
             return _powerShellQueue.Count;
         }
-        private PowerShell GetPosh(PoshJob poshJob/*, Runspace runspace*/) {
+        private PowerShell GetPoshInstance(PoshJob poshJob/*, Runspace runspace*/) {
             PowerShell ps = GetPowerShell();
-            //ps.Runspace = runspace;
-            //deal with parameters soon
-            ps.Commands.AddScript(poshJob.Script);
             ps.AddScript(poshJob.Script);
             //capture stream output
             ps.Streams.Verbose.DataAdded += delegate (object sender, DataAddedEventArgs e) {
@@ -121,31 +118,30 @@ namespace EphIt.Service.Posh
         }
         public PoshJob RunJob(PoshJob poshJob)
         {
-            PowerShell ps = GetPosh(poshJob);
+            PowerShell ps = GetPoshInstance(poshJob);
             if (ps == null)
             {
                 Log.Warning("All PowerShell instances are in use.");
                 return null;
             }
-            if (poshJob.Parameters.Count != 0)
+            if (poshJob.Parameters != null && poshJob.Parameters.Count != 0)
             {
                 ps.AddParameters(poshJob.Parameters);
             }
+            
             poshJob.PoshInstance = ps;
-            poshJob.RunningJob = StartScript(poshJob, ps);
+            poshJob.RunningJob = StartScript(poshJob);
+            Log.Information($"Job {poshJob.JobUID} started.");
             return poshJob;
         }
         
-        public async Task<PSDataCollection<PSObject>> StartScript(PoshJob poshJob, PowerShell powershell) //maybe add withRunspace parameter in the future. I have no idea what a runspace provides.
+        public async Task<PSDataCollection<PSObject>> StartScript(PoshJob poshJob) //maybe add withRunspace parameter in the future. I have no idea what a runspace provides.
         {
-            //Runspace rs = GetRunspace();
-            //if(rs == null)
-            //{
-                //log here
-            //    return null;
-            //}
-            return await powershell.InvokeAsync();
-            //return ps.InvokeAsync<PSDataCollection<PSObject>>(new PSDataCollection<PSDataCollection<PSObject>>());
+            PSDataCollection<PSDataCollection<PSObject>> output = new PSDataCollection<PSDataCollection<PSObject>>();
+            output.DataAdded += delegate (object sender, DataAddedEventArgs e) {
+                _streamHelper.RecordOutput(poshJob, sender, e);
+            };
+            return await poshJob.PoshInstance.InvokeAsync<PSDataCollection<PSObject>, PSDataCollection<PSObject>>(null, output);
         }
         public bool RunspaceAvailable()
         {
@@ -154,6 +150,11 @@ namespace EphIt.Service.Posh
         public bool PowerShellAvailable()
         {
             return !_runspaceQueue.IsEmpty;
+        }
+        public void RecordOutput(Guid jobId, PSObject result)
+        {
+            //this might be its own class someday.
+            Log.Information($"{jobId} Output: Type - {result.TypeNames[0]} Value - {result.BaseObject}");
         }
     }
 }

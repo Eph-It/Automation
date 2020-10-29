@@ -14,7 +14,7 @@ namespace EphIt.Server.Controllers
 {
     [Route("/api/[controller]")]
     [ApiController]
-    [Authorize("ScriptRead")]
+    [Authorize("ScriptsRead")]
     public class ScriptController : ControllerBase
     {
         private IEphItUser _ephItUser;
@@ -49,21 +49,21 @@ namespace EphIt.Server.Controllers
         }
         [HttpPost]
         [Route("/api/[controller]")]
-        [Authorize("ScriptEdit")]
+        [Authorize("ScriptsModify")]
         public async Task<int> New([FromBody] ScriptPostParameters postParams)
         {
             return await _scriptManager.NewAsync(postParams.Name, postParams.Description);
         }
         [HttpPut]
         [Route("[controller]/{scriptId}")]
-        [Authorize("ScriptEdit")]
+        [Authorize("ScriptsModify")]
         public async Task Update(int scriptId, [FromBody] ScriptPostParameters postParams)
         {
             await _scriptManager.Update(scriptId, postParams.Name, postParams.Description, postParams.Published_Version);
         }
         [HttpDelete]
         [Route("[controller]/{scriptId}")]
-        [Authorize("ScriptDelete")]
+        [Authorize("ScriptsDelete")]
         public async Task Delete(int scriptId)
         {
             await _scriptManager.Delete(scriptId);
@@ -76,7 +76,7 @@ namespace EphIt.Server.Controllers
         }
         [HttpPost]
         [Route("/api/[controller]/{scriptId}/Version")]
-        [Authorize("ScriptEdit")]
+        [Authorize("ScriptsModify")]
         public async Task<int> NewVersion(int scriptId, [FromBody] ScriptVersionPostParameters postParams)
         {
             return await _scriptManager.NewVersionAsync(scriptId, postParams.ScriptBody, postParams.ScriptLanguageId);

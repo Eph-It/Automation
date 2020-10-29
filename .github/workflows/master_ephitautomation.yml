@@ -22,9 +22,15 @@ jobs:
 
     - name: Build with dotnet
       run: dotnet build --configuration Release
+      working-directory: src\EphIt
 
     - name: dotnet publish
-      run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      run: dotnet publish -c Release --no-build --self-contained true -o ${{env.DOTNET_ROOT}}/EphItAutomation
+      working-directory: src\EphIt
+
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
@@ -32,4 +38,4 @@ jobs:
         app-name: 'ephitautomation'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_49dbcea1dd6e441ba8f601e5d36a2f34 }}
-        package: ${{env.DOTNET_ROOT}}/myapp 
+        package: ${{env.DOTNET_ROOT}}/EphItAutomation 
