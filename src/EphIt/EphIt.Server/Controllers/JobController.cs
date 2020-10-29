@@ -15,7 +15,7 @@ namespace EphIt.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize("Job")]
+    [Authorize("JobsRead")]
     public class JobController : Controller
     {
         private IEphItUser _ephItUser;
@@ -33,7 +33,7 @@ namespace EphIt.Server.Controllers
         }
         [HttpPost]
         [Route("/api/[controller]")]
-        [Authorize("JobEdit")]
+        [Authorize("JobsModify")]
         public void New([FromBody] JobPostParameters postParams)
         {
             //this DB call should be in a BL eventually.

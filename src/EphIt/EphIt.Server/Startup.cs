@@ -52,10 +52,15 @@ namespace EphIt.Blazor.Server
             services.AddScoped<IJobManager, JobManager>();
             services.AddAuthorization(options => 
             {
-                options.AddPolicy("ScriptEdit", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Modify, RBACObjectEnum.Scripts)));
-                options.AddPolicy("Script", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Read, RBACObjectEnum.Scripts)));
-                options.AddPolicy("ScriptRead", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Read, RBACObjectEnum.Scripts)));
-                options.AddPolicy("ScriptDelete", policy => policy.Requirements.Add(new EphItAuthRequirement(RBACActionEnum.Delete, RBACObjectEnum.Scripts)));
+                RBACObjectEnum[] objEnums = (RBACObjectEnum[]) Enum.GetValues(typeof(RBACObjectEnum));
+                foreach (RBACActionEnum actionEnum in (RBACActionEnum[])Enum.GetValues(typeof(RBACActionEnum)))
+                {
+                    foreach(var objEnum in objEnums)
+                    {
+                        string name = $"{objEnum}{actionEnum}";
+                        options.AddPolicy(name, policy => policy.Requirements.Add(new EphItAuthRequirement(actionEnum, objEnum)));
+                    }
+                }
             });
             services.AddTransient<IAuthorizationHandler, EphItAuthRequirementHandler>();
         }
