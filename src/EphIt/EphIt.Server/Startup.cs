@@ -20,6 +20,7 @@ using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Server.IIS;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using EphIt.BL.JobManager;
+using System.Collections.Generic;
 
 namespace EphIt.Blazor.Server
 {
@@ -182,6 +183,42 @@ namespace EphIt.Blazor.Server
                 _context.Add(newRoleMembership);
             }
             _context.SaveChanges();
+            IConfigurationSection configSection = Configuration.GetSection("AdminUsers");
+            if(configSection != null)
+            {
+                foreach(var section in configSection.GetChildren())
+                {
+                    var paramDictionary = new Dictionary<string, string>();
+                    string authType = "";
+                    switch (section["AuthenticationType"])
+                    {
+                        case "AzureActiveDirectory":
+                            authType = "AzureActiveDirectory";
+                            paramDictionary = new Dictionary<string, string>()
+                            {
+                                { "TenantId", section["TenantId"] },
+                                { "ObjectId", section["ObjectId"] },
+                                { "UserName", section["UserName"] },
+                                { "Name", section["Name"] },
+                                { "Email", section["Email"] }
+                            };
+                            break;
+                    }
+                    if (!String.IsNullOrEmpty(authType))
+                    {
+                        var aUser = user.Register(authType, paramDictionary);
+                        if (!_context.RoleMembershipUser.Where(p => p.UserId == aUser.UserId && p.Role.Name.Equals("Administrators")).Any())
+                        {
+                            var admin = _context.Role.Where(p => p.Name.Equals("Administrators")).FirstOrDefault();
+                            var newRoleMembership = new RoleMembershipUser();
+                            newRoleMembership.RoleId = admin.RoleId;
+                            newRoleMembership.UserId = aUser.UserId;
+                            _context.Add(newRoleMembership);
+                        }
+                        _context.SaveChanges();
+                    }
+                }
+            }
         }
     }
 }

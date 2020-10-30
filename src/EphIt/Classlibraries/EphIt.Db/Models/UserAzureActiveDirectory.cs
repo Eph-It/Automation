@@ -14,23 +14,19 @@ namespace EphIt.Db.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserAzureActiveDirectoryId { get; set; }
         public int UserId { get; set; }
-        [MaxLength(64)]
-        public string FirstName { get; set; }
-        [MaxLength(100)]
-        public string LastName { get; set; }
+        [MaxLength(150)]
+        public string Name { get; set; }
         [Required]
         [MaxLength(256)]
         public string UserName { get; set; }
         [Required]
-        [MaxLength(100)]
-        public string Domain { get; set; }
+        [MaxLength(50)]
+        public string TenantId { get; set; }
         [MaxLength(100)]
         public string Email { get; set; }
-        [MaxLength(250)]
-        public string DisplayName { get; set; }
         [Required]
-        [MaxLength(100)]
-        public string SID { get; set; }
+        [MaxLength(50)]
+        public string ObjectId { get; set; }
 
         public virtual User User { get; set; }
     }
