@@ -4,8 +4,6 @@ An automation project to allow organizations to write and track IT process autom
 
 More documentation in the [Wiki](https://github.com/Eph-It/Automation/wiki)
 
-Tracking work through a [Pivotal Project](https://www.pivotaltracker.com/projects/2469644)
-
 # Major Components
 
 ## EphIt.Blazor
