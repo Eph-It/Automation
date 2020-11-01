@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Automation": {
+      "commandName": "Executable",
+      "executablePath": "pwsh",
+      "commandLineArgs": "-noexit -command \"&{ import-module .\\Automation.dll -verbose}\""
+    }
+  }
+}
