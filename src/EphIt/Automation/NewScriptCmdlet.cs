@@ -4,12 +4,16 @@ using System.IO;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Automation
 {
     [Cmdlet(VerbsCommon.New, "AutomationScript")]
-    public class NewScriptCmdlet : PSCmdlet
+    public class NewScriptCmdlet : PSCmdlet, IDynamicParameters
     {
+        private static RuntimeDefinedParameterDictionary _staticStorage;
         private string scriptName;
         private string scriptBody;
         private string scriptDescription;
@@ -44,33 +48,16 @@ namespace Automation
             set { scriptBody = value; }
         }
 
-        [Parameter(
-            Mandatory = true,
-            ValueFromPipeline = false,
-            ValueFromPipelineByPropertyName = false,
-            Position = 1,
-            HelpMessage = "Server"
-        )]
-        public string Server
+        public object GetDynamicParameters()
         {
-            get { return automationHelper.GetServer(); }
-            set { automationHelper.SetServer(value); }
-        }
-
-        [Parameter(
-            Mandatory = true,
-            ValueFromPipeline = false,
-            ValueFromPipelineByPropertyName = false,
-            Position = 2,
-            HelpMessage = "Port"
-        )]
-        public int Port
-        {
-            get { return automationHelper.GetPort(); }
-            set { automationHelper.SetPort(value); }
+            return DynamicParameters.dynParams(ref _staticStorage);
         }
         protected override void BeginProcessing()
         {
+            string server = (string)_staticStorage.Values.Where(v => v.Name.Equals("Server")).Select(s => s.Value).FirstOrDefault();
+            int port = (int)_staticStorage.Values.Where(v => v.Name.Equals("Port")).Select(s => s.Value).FirstOrDefault();
+            automationHelper.SetPort(port);
+            automationHelper.SetServer(server);
             base.BeginProcessing();
         }
         protected override void ProcessRecord()
@@ -79,6 +66,7 @@ namespace Automation
             url = url + "/api/Script";
             WebRequest request = WebRequest.Create(url);
             request.Method = "POST";
+            WriteVerbose($"Using URL :{url}");
             ScriptPostParameters postParams = new ScriptPostParameters();
             postParams.Description = scriptDescription;
             postParams.Name = scriptName;
