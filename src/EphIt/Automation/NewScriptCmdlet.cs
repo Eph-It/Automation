@@ -7,10 +7,12 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using EphIt.Db.Models;
 
 namespace Automation
 {
     [Cmdlet(VerbsCommon.New, "AutomationScript")]
+    [OutputType(typeof(VMScript))]
     public class NewScriptCmdlet : PSCmdlet, IDynamicParameters
     {
         private static RuntimeDefinedParameterDictionary _staticStorage;
@@ -36,10 +38,22 @@ namespace Automation
             set { scriptName = value; }
         }
         [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = true,
+            ValueFromPipelineByPropertyName = true,
+            Position = 1,
+            HelpMessage = "Script Description"
+        )]
+        public string Description
+        {
+            get { return scriptDescription; }
+            set { scriptDescription = value; }
+        }
+        [Parameter(
             Mandatory = true,
             ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true,
-            Position = 0,
+            Position = 2,
             HelpMessage = "Script Body"
         )]
         public string Body
@@ -64,44 +78,39 @@ namespace Automation
         {
             string url = automationHelper.GetUrl();
             url = url + "/api/Script";
-            WebRequest request = WebRequest.Create(url);
-            request.Method = "POST";
+
             WriteVerbose($"Using URL :{url}");
+            //does it already exist?
+            List<VMScript> result = automationHelper.GetWebCall<List<VMScript>>(url + $"?Name={scriptName}");
+            bool exists = result.Any(r => r.Name.Equals(scriptName));
+            if (exists)
+            {
+                WriteVerbose($"Script already exists.");
+                return;
+            }
+
+            //create new
             ScriptPostParameters postParams = new ScriptPostParameters();
             postParams.Description = scriptDescription;
             postParams.Name = scriptName;
-            request.Credentials = CredentialCache.DefaultCredentials;
-            request.ContentType = "application/json";
-            Stream requestStream = request.GetRequestStream();
-            var postJson = JsonConvert.SerializeObject(postParams);
-            var bytes = Encoding.ASCII.GetBytes(postJson);
-            requestStream.Write(bytes, 0, bytes.Length);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Display the status.
-            Console.WriteLine(response.StatusDescription);
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Display the content.
-            Console.WriteLine(responseFromServer);
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
+            string scriptID = automationHelper.PostWebCall(url, postParams);
+            
+            //create version
+            url = automationHelper.GetUrl() + $"/api/Script/{scriptID}/Version";
+            ScriptVersionPostParameters verPostParms = new ScriptVersionPostParameters();
+            verPostParms.ScriptBody = scriptBody;
+            verPostParms.ScriptLanguageId = 2; //this needs to be dynamic someday
+            string versionID = automationHelper.PostWebCall(url, verPostParms);
+
+            //return script object
+            url = automationHelper.GetUrl() + $"/api/Script/{scriptID}";
+            WriteObject(automationHelper.GetWebCall<VMScript>(url));
+            
             base.ProcessRecord();
         }
         protected override void EndProcessing()
         {
             base.EndProcessing();
-        }
-        public class ScriptPostParameters
-        {
-            public string Name { get; set; }
-            public string Description { get; set; }
-            public int? Published_Version { get; set; }
         }
     }
 }

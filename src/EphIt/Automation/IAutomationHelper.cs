@@ -11,5 +11,8 @@ namespace Automation
         string GetServer();
         void SetPort(int port);
         int GetPort();
+        string PostWebCall(string url, object body);
+        string GetWebCall(string url);
+        T GetWebCall<T>(string url);
     }
 }
