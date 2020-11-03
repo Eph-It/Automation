@@ -1,10 +1,12 @@
 ﻿using EphIt.Db.Models;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
+using System.Security.Claims;
 using System.Security.Principal;
 
 namespace EphIt.BL.User
@@ -28,6 +30,11 @@ namespace EphIt.BL.User
                             .Where(p => p.SID.Equals(uniqueIdentifier))
                             .Select(p => p.User)
                             .FirstOrDefault();
+                case "AzureActiveDirectory":
+                    return _db.UserAzureActiveDirectory
+                        .Where(p => p.ObjectId.Equals(uniqueIdentifier))
+                        .Select(p => p.User)
+                        .FirstOrDefault();
                 default:
                     break;
             }
@@ -41,28 +48,88 @@ namespace EphIt.BL.User
             _db.SaveChanges();
             return newUser;
         }
-        private Db.Models.User RegisterActiveDirectory(WindowsIdentity user)
+        private Db.Models.User NewActiveDirectoryUser(string SID, string UserName, string Domain)
         {
-            var authType = "ActiveDirectory";
-            string uniqueId = user.User.ToString();
-
-            var ephUser = GetUser(authType, uniqueId);
-            if (ephUser != null) { return ephUser; }
-
             var newUser = NewUser((short)AuthenticationEnum.ActiveDirectory);
-
-            var windowsPrincipal = new WindowsPrincipal(user);
-            var splitUser = user.Name.Split('\\');
 
             var newActiveDirectoryUser = new UserActiveDirectory();
             newActiveDirectoryUser.UserId = newUser.UserId;
-            newActiveDirectoryUser.SID = uniqueId;
-            newActiveDirectoryUser.UserName = user.Name.Split('\\').Last();
-            newActiveDirectoryUser.Domain = splitUser.Count() > 1 ? splitUser[0] : "WORKGROUP";
+            newActiveDirectoryUser.SID = SID;
+            newActiveDirectoryUser.UserName = UserName;
+            newActiveDirectoryUser.Domain = Domain;
             _db.Add(newActiveDirectoryUser);
             _db.SaveChanges();
 
-            return GetUser(authType, uniqueId);
+            return GetUser("ActiveDirectory", SID);
+        }
+        private Db.Models.User RegisterActiveDirectory(WindowsIdentity user)
+        {
+            string uniqueId = user.User.ToString();
+            var windowsPrincipal = new WindowsPrincipal(user);
+            var splitUser = user.Name.Split('\\');
+
+            var paramDictionary = new Dictionary<string, string>
+            {
+                { "SID", uniqueId },
+                { "UserName", user.Name.Split('\\').Last() },
+                { "Domain", splitUser.Count() > 1 ? splitUser[0] : "WORKGROUP" }
+            };
+            return Register("ActiveDirectory", paramDictionary);
+
+        }
+        private Db.Models.User NewAzureActiveDirectoryUser(string name, string userName, string objectId, string tenantId)
+        {
+            var newUser = NewUser((short)AuthenticationEnum.AzureActiveDirectory);
+            var newAzureActiveDirectoryUser = new UserAzureActiveDirectory
+            {
+                Name = name,
+                Email = userName,
+                ObjectId = objectId,
+                TenantId = tenantId,
+                UserName = userName,
+                UserId = newUser.UserId
+            };
+            _db.Add(newAzureActiveDirectoryUser);
+            _db.SaveChanges();
+
+            return GetUser("AzureActiveDirectory", objectId);
+        }
+        private Db.Models.User RegisterAzureActiveDirectory(ClaimsIdentity claimId)
+        {
+            string name = null;
+            string userName = null;
+            string objectId = null;
+            string tenantId = null;
+            foreach (var c in claimId.Claims)
+            {
+                switch (c.Type.ToLower())
+                {
+                    case "name":
+                        name = c.Value;
+                        break;
+                    case "http://schemas.microsoft.com/identity/claims/objectidentifier":
+                        objectId = c.Value;
+                        break;
+                    case "preferred_username":
+                        userName = c.Value;
+                        break;
+                    case "http://schemas.microsoft.com/identity/claims/tenantid":
+                        tenantId = c.Value;
+                        break;
+                }
+            }
+            if(String.IsNullOrEmpty(objectId) || String.IsNullOrEmpty(tenantId) || String.IsNullOrEmpty(userName))
+            {
+                throw new Exception("Error getting user information from Azure Active Directory claim");
+            }
+            var paramDictionary = new Dictionary<string, string>
+            {
+                { "Name", name },
+                { "ObjectId", objectId },
+                { "UserName", userName },
+                { "TenantId", tenantId }
+            };
+            return Register("AzureActiveDirectory", paramDictionary);
         }
         public Db.Models.User RegisterCurrent()
         {
@@ -70,7 +137,8 @@ namespace EphIt.BL.User
         }
         public Db.Models.User Register()
         {
-            if(System.Environment.GetEnvironmentVariable("NOAUTH").Equals("True"))
+            var noAuth = System.Environment.GetEnvironmentVariable("NOAUTH");
+            if (noAuth == "True")
             {
                 return _db.User.Where(u => u.UserId == 1).FirstOrDefault();
             }
@@ -86,7 +154,33 @@ namespace EphIt.BL.User
             {
                 _user = RegisterActiveDirectory((WindowsIdentity)userId);
             }
+            else if (userId.AuthenticationType == "AuthenticationTypes.Federation")
+            {
+                _user = RegisterAzureActiveDirectory((ClaimsIdentity)userId);
+            }
+            else
+            {
+                Log.Error("Unknown user type");
+                throw new Exception("Unknown user type");
+            }
             return _user;
+        }
+        public Db.Models.User Register(string AuthType, Dictionary<string, string> Values)
+        {
+            switch (AuthType)
+            {
+                case "ActiveDirectory":
+                    string sid = Values["SID"];
+                    var adUser = GetUser(AuthType, sid);
+                    if (adUser != null) { return adUser; }
+                    return NewActiveDirectoryUser(Values["SID"], Values["UserName"], Values["Domain"]);
+                case "AzureActiveDirectory":
+                    string objId = Values["ObjectId"];
+                    var aadUser = GetUser(AuthType, objId);
+                    if (aadUser != null) { return aadUser; }
+                    return NewAzureActiveDirectoryUser(Values["Name"], Values["UserName"], Values["ObjectId"], Values["TenantId"]);
+            }
+            return null;
         }
         private ICollection<string> GetWindowsGroups()
         {
