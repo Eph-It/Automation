@@ -69,7 +69,7 @@ namespace EphIt.Server.Controllers
             await _scriptManager.Delete(scriptId);
         }
         [HttpGet]
-        [Route("[controller]/{scriptId}/Version")]
+        [Route("/api/[controller]/{scriptId}/Version")]
         public async Task<IEnumerable<VMScriptVersion>> GetVersion(int scriptId, bool IncludeAll = false)
         {
             return await _scriptManager.GetVersionAsync(scriptId, IncludeAll);
