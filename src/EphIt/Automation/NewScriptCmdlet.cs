@@ -16,9 +16,6 @@ namespace Automation
     public class NewScriptCmdlet : PSCmdlet, IDynamicParameters
     {
         private static RuntimeDefinedParameterDictionary _staticStorage;
-        private string scriptName;
-        private string scriptBody;
-        private string scriptDescription;
         private IAutomationHelper automationHelper;
 
         public NewScriptCmdlet() 
@@ -32,11 +29,8 @@ namespace Automation
             Position = 0,
             HelpMessage = "Script Name"
         )]
-        public string Name
-        {
-            get { return scriptName; }
-            set { scriptName = value; }
-        }
+        public string Name { get; set; }
+        
         [Parameter(
             Mandatory = false,
             ValueFromPipeline = true,
@@ -44,23 +38,16 @@ namespace Automation
             Position = 1,
             HelpMessage = "Script Description"
         )]
-        public string Description
-        {
-            get { return scriptDescription; }
-            set { scriptDescription = value; }
-        }
+        public string Description { get; set; }
+        
         [Parameter(
-            Mandatory = true,
+            Mandatory = false,
             ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true,
             Position = 2,
             HelpMessage = "Script Body"
         )]
-        public string Body
-        {
-            get { return scriptBody; }
-            set { scriptBody = value; }
-        }
+        public string Body { get; set; }
 
         public object GetDynamicParameters()
         {
@@ -81,8 +68,8 @@ namespace Automation
 
             WriteVerbose($"Using URL :{url}");
             //does it already exist?
-            List<VMScript> result = automationHelper.GetWebCall<List<VMScript>>(url + $"?Name={scriptName}");
-            bool exists = result.Any(r => r.Name.Equals(scriptName));
+            List<VMScript> result = automationHelper.GetWebCall<List<VMScript>>(url + $"?Name={Name}");
+            bool exists = result.Any(r => r.Name.Equals(Name));
             if (exists)
             {
                 WriteVerbose($"Script already exists.");
@@ -91,16 +78,20 @@ namespace Automation
 
             //create new
             ScriptPostParameters postParams = new ScriptPostParameters();
-            postParams.Description = scriptDescription;
-            postParams.Name = scriptName;
+            postParams.Description = Description;
+            postParams.Name = Name;
             string scriptID = automationHelper.PostWebCall(url, postParams);
             
             //create version
-            url = automationHelper.GetUrl() + $"/api/Script/{scriptID}/Version";
-            ScriptVersionPostParameters verPostParms = new ScriptVersionPostParameters();
-            verPostParms.ScriptBody = scriptBody;
-            verPostParms.ScriptLanguageId = 2; //this needs to be dynamic someday
-            string versionID = automationHelper.PostWebCall(url, verPostParms);
+            if(!string.IsNullOrEmpty(Body))
+            {
+                url = automationHelper.GetUrl() + $"/api/Script/{scriptID}/Version";
+                ScriptVersionPostParameters verPostParms = new ScriptVersionPostParameters();
+                verPostParms.ScriptBody = Body;
+                verPostParms.ScriptLanguageId = 2; //this needs to be dynamic someday
+                string versionID = automationHelper.PostWebCall(url, verPostParms);
+                WriteVerbose($"Version ID: {versionID}");
+            }
 
             //return script object
             url = automationHelper.GetUrl() + $"/api/Script/{scriptID}";
