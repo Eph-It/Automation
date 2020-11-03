@@ -16,8 +16,11 @@ using EphIt.BL.Authorization;
 using EphIt.BL.User;
 using EphIt.BL.Script;
 using EphIt.BL.Audit;
+using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Server.IIS;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using EphIt.BL.JobManager;
+using System.Collections.Generic;
 
 namespace EphIt.Blazor.Server
 {
@@ -34,7 +37,15 @@ namespace EphIt.Blazor.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            var configSection = Configuration.GetSection("EphItSettings");
+            if(!String.IsNullOrEmpty(configSection["AzureADAuthentication"]))
+            {
+                if(configSection["AzureADAuthentication"] == "true")
+                {
+                    services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                        .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAdApp"));
+                }
+            }
             AppDomain.CurrentDomain.ProcessExit += (s, e) => Log.CloseAndFlush();
             services.AddSingleton(Log.Logger);
 
@@ -97,6 +108,7 @@ namespace EphIt.Blazor.Server
             app.UseSerilogRequestLogging();
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
@@ -171,6 +183,42 @@ namespace EphIt.Blazor.Server
                 _context.Add(newRoleMembership);
             }
             _context.SaveChanges();
+            IConfigurationSection configSection = Configuration.GetSection("AdminUsers");
+            if(configSection != null)
+            {
+                foreach(var section in configSection.GetChildren())
+                {
+                    var paramDictionary = new Dictionary<string, string>();
+                    string authType = "";
+                    switch (section["AuthenticationType"])
+                    {
+                        case "AzureActiveDirectory":
+                            authType = "AzureActiveDirectory";
+                            paramDictionary = new Dictionary<string, string>()
+                            {
+                                { "TenantId", section["TenantId"] },
+                                { "ObjectId", section["ObjectId"] },
+                                { "UserName", section["UserName"] },
+                                { "Name", section["Name"] },
+                                { "Email", section["Email"] }
+                            };
+                            break;
+                    }
+                    if (!String.IsNullOrEmpty(authType))
+                    {
+                        var aUser = user.Register(authType, paramDictionary);
+                        if (!_context.RoleMembershipUser.Where(p => p.UserId == aUser.UserId && p.Role.Name.Equals("Administrators")).Any())
+                        {
+                            var admin = _context.Role.Where(p => p.Name.Equals("Administrators")).FirstOrDefault();
+                            var newRoleMembership = new RoleMembershipUser();
+                            newRoleMembership.RoleId = admin.RoleId;
+                            newRoleMembership.UserId = aUser.UserId;
+                            _context.Add(newRoleMembership);
+                        }
+                        _context.SaveChanges();
+                    }
+                }
+            }
         }
     }
 }
