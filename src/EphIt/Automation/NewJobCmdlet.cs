@@ -5,6 +5,7 @@ using System.Management.Automation;
 using EphIt.Db.Models;
 using System.Linq;
 using Newtonsoft.Json;
+using EphIt.BL.Automation;
 
 namespace Automation
 {
