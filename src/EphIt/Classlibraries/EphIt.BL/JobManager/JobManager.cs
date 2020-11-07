@@ -19,7 +19,7 @@ namespace EphIt.BL.JobManager
             _context = context;
             _logger = logger;
         }
-        public void QueueJob(ScriptVersion script, int? UserId = null, int? ScheduleId = null, int? AutomationId = null)
+        public Guid QueueJob(ScriptVersion script, int? UserId = null, int? ScheduleId = null, int? AutomationId = null)
         {
             var newJob = new Job();
             newJob.Created = DateTime.UtcNow;
@@ -39,6 +39,7 @@ namespace EphIt.BL.JobManager
             newJobQueue.ScriptLanguage = (short)script.ScriptLanguageId;
             _context.Add(newJobQueue);
             _context.SaveChanges();
+            return newJobQueue.JobUid;
         }
         public Job GetQueuedJob(ScriptLanguageEnum languages)
         {

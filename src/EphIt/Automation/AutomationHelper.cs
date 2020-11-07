@@ -50,7 +50,7 @@ namespace Automation
             requestStream.Write(bytes, 0, bytes.Length);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             // Display the status.
-            Console.WriteLine(response.StatusDescription);
+            // Console.WriteLine(response.StatusDescription);
             // Get the stream containing content returned by the server.
             Stream dataStream = response.GetResponseStream();
             // Open the stream using a StreamReader for easy access.
@@ -100,5 +100,12 @@ namespace Automation
     {
         public string ScriptBody { get; set; }
         public short ScriptLanguageId { get; set; }
+    }
+    public class JobPostParameters
+    {
+        public int ScriptVersionID { get; set; }
+        public int? ScheduleID { get; set; }
+        public int? AutomationID { get; set; } //maybe should be guid?
+        //maybe add a runbook server param later?
     }
 }

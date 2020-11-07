@@ -34,14 +34,15 @@ namespace EphIt.Server.Controllers
         [HttpPost]
         [Route("/api/[controller]")]
         [Authorize("JobsModify")]
-        public void New([FromBody] JobPostParameters postParams)
+        public Guid? New([FromBody] JobPostParameters postParams)
         {
             //this DB call should be in a BL eventually.
             ScriptVersion ver = _dbContext.ScriptVersion.Where(v => v.ScriptVersionId == postParams.ScriptVersionID).FirstOrDefault();
             if(ver != null)
             {
-                _jobManager.QueueJob(ver, _ephItUser.Register().UserId, postParams.ScheduleID, postParams.AutomationID);
+                return _jobManager.QueueJob(ver, _ephItUser.Register().UserId, postParams.ScheduleID, postParams.AutomationID);
             }
+            return null;
         }
     }
     public class JobPostParameters

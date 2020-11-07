@@ -9,7 +9,7 @@ namespace EphIt.BL.JobManager
 {
     public interface IJobManager
     {
-        void QueueJob(ScriptVersion script, int? UserId = null, int? ScheduleId = null, int? AutomationId = null);
+        Guid QueueJob(ScriptVersion script, int? UserId = null, int? ScheduleId = null, int? AutomationId = null);
         Job GetQueuedJob(ScriptLanguageEnum languages);
         Dictionary<string, object> GetJobParameters(Job job);
         void Start(Job job);
