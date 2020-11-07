@@ -16,5 +16,6 @@ namespace EphIt.BL.JobManager
         void Finish(Job job, bool Errored = false);
         string GetScript(Job job);
         Task LogAsync(Guid jobUid, string message, JobLogLevelEnum level, string Exception = null);
+        VMScriptJob GetQueuedScriptedJob(ScriptLanguageEnum languages);
     }
 }

@@ -143,5 +143,21 @@ namespace EphIt.BL.JobManager
             _context.Add(newJobLog);
             return _context.SaveChangesAsync();
         }
+        public VMScriptJob GetQueuedScriptedJob(ScriptLanguageEnum languages)
+        {
+            var job = GetQueuedJob(languages);
+            if(job == null)
+            {
+                return null;
+            }
+            var body = GetScript(job);
+            var parameters = GetJobParameters(job);
+            VMScriptJob vmScriptJob = new VMScriptJob();
+            vmScriptJob.Job = job;
+            vmScriptJob.Script = body;
+            vmScriptJob.Parameters = parameters;
+            return vmScriptJob;
+        }
+
     }
 }
