@@ -17,6 +17,7 @@ using EphIt.Service.Posh;
 using EphIt.Service.Posh.Stream;
 using EphIt.Service.Workers;
 using EphIt.BL.JobManager;
+using EphIt.BL.Automation;
 
 namespace EphIt.Service
 {
@@ -62,13 +63,13 @@ namespace EphIt.Service
                     services.AddSingleton<IStreamHelper, StreamHelper>();
                     services.AddSingleton<IPoshManager, PoshManager>();
                     services.AddSingleton<IPoshJobManager, PoshJobManager>();
-                    services.AddScoped<IJobManager, JobManager>();
                     services.AddDbContext<EphItContext>(
                         options =>
                             options.UseSqlServer(hostContext.Configuration.GetConnectionString("EphItDb"))
                         );
                     services.AddHostedService<StartPendingJobsWorker>();
                     services.AddHostedService<MonitorRunningJobsWorker>();
+                    services.AddHostedService<AskForJob>();
                     //services.AddHostedService<CreateJobsWorker>();
                 })
             .UseSerilog();

@@ -44,6 +44,16 @@ namespace EphIt.Server.Controllers
             }
             return null;
         }
+        [HttpGet]
+        [Route("/api/[controller]/Queued")]
+        [Authorize("JobsExecute")]
+        public VMScriptJob GetQueuedJob(ScriptLanguageEnum language)
+        {
+            //is this a runbook worker or something else authorized? TODO
+
+            return _jobManager.GetQueuedScriptedJob(language);
+
+        }
     }
     public class JobPostParameters
     {
