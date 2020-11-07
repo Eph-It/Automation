@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using EphIt.Db.Models;
+using EphIt.BL.Automation;
 
 namespace Automation
 {

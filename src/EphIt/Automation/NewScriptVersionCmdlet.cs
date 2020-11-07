@@ -4,6 +4,7 @@ using System.Text;
 using System.Management.Automation;
 using EphIt.Db.Models;
 using System.Linq;
+using EphIt.BL.Automation;
 
 namespace Automation
 {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Automation
+namespace EphIt.BL.Automation
 {
-    interface IAutomationHelper
+    public interface IAutomationHelper
     {
         string GetUrl();
         void SetServer(string name);

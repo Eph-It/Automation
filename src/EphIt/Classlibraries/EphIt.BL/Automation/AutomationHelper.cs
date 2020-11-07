@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Security.Policy;
+//using System.Security.Policy;
 using System.Text;
 
-namespace Automation
+namespace EphIt.BL.Automation
 {
-    class AutomationHelper : IAutomationHelper
+    public class AutomationHelper : IAutomationHelper
     {
         public string Server { get; set; }
         public int Port { get; set; }
