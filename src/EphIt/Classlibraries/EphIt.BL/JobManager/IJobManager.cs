@@ -13,7 +13,9 @@ namespace EphIt.BL.JobManager
         Job GetQueuedJob(ScriptLanguageEnum languages);
         Dictionary<string, object> GetJobParameters(Job job);
         void Start(Job job);
+        void Start(Guid jobId);
         void Finish(Job job, bool Errored = false);
+        void Finish(Guid jobId, bool Errored = false);
         string GetScript(Job job);
         Task LogAsync(Guid jobUid, string message, JobLogLevelEnum level, string Exception = null);
         VMScriptJob GetQueuedScriptedJob(ScriptLanguageEnum languages);

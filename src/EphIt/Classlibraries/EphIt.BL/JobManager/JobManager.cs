@@ -114,6 +114,14 @@ namespace EphIt.BL.JobManager
             job.JobStatusId = (short)JobStatusEnum.InProgress;
             _context.SaveChanges();
         }
+        public void Start(Guid jobId)
+        {
+            var job = _context.Job.Where(j => j.JobUid.Equals(jobId)).FirstOrDefault();
+            if(job != null)
+            {
+                Start(job);
+            }
+        }
         public void Finish(Job job, bool Errored = false)
         {
             job.JobStatusId = (short)JobStatusEnum.Complete;
@@ -124,6 +132,16 @@ namespace EphIt.BL.JobManager
             job.Finish = DateTime.UtcNow;
             _context.SaveChanges();
         }
+        public void Finish(Guid jobId, bool Errored = false)
+        {
+            var job = _context.Job.Where(j => j.JobUid.Equals(jobId)).FirstOrDefault();
+            if (job != null)
+            {
+                Finish(job, Errored);
+            }
+        }
+
+
         public string GetScript(Job job)
         {
             return _context.ScriptVersion
