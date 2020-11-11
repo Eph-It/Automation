@@ -14,7 +14,6 @@ using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using EphIt.Service.Posh.Job;
 using EphIt.Service.Posh;
-using EphIt.Service.Posh.Stream;
 using EphIt.Service.Workers;
 using EphIt.BL.JobManager;
 using EphIt.BL.Automation;
@@ -60,7 +59,6 @@ namespace EphIt.Service
                 .UseWindowsService()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddSingleton<IStreamHelper, StreamHelper>();
                     services.AddSingleton<IPoshManager, PoshManager>();
                     services.AddSingleton<IPoshJobManager, PoshJobManager>();
                     services.AddDbContext<EphItContext>(

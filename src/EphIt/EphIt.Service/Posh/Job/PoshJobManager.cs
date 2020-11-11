@@ -4,7 +4,6 @@ using System.Text;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Management.Automation.Runspaces;
-using EphIt.Service.Posh.Stream;
 using EphIt.Service.Posh.Job;
 using EphIt.Service.Posh;
 using System.Management.Automation;
@@ -19,17 +18,20 @@ namespace EphIt.Service.Posh.Job
 {
     public class PoshJobManager : IPoshJobManager
     {
+        private ConcurrentDictionary<Guid, bool> jobsWithErrors = new ConcurrentDictionary<Guid, bool>();
         private ConcurrentQueue<PoshJob> pendingJobQueue = new ConcurrentQueue<PoshJob>();
         private ConcurrentQueue<ProblemJob> problemJobs = new ConcurrentQueue<ProblemJob>();
         private ConcurrentQueue<PoshJob> retryJobs = new ConcurrentQueue<PoshJob>();
         private ConcurrentDictionary<Guid, PoshJob> runningJobs = new ConcurrentDictionary<Guid, PoshJob>();
         private IPoshManager _poshManager;
         private IAutomationHelper automationHelper;
+        //private IStreamHelper _streamHelper;
 
         //private EphIt.BL.JobManager.IJobManager _jobManager;
         public PoshJobManager(IPoshManager poshManager, IConfiguration config)
         {
             //_jobManager = jobManager;
+            //_streamHelper = streamHelper;
             _poshManager = poshManager;
             automationHelper = new AutomationHelper();
             automationHelper.SetServer(config.GetSection("ServerInfo:WebServer").Value);
@@ -45,8 +47,16 @@ namespace EphIt.Service.Posh.Job
                 {
                     _poshManager.RetirePowerShell(poshInstance);
                     RemoveRunningJob(runningJob);
-                    Log.Information($"Job {runningJob.Key} has completed.");
-                    string url = automationHelper.GetUrl() + $"/api/Job/{runningJob.Value.JobUID}/Finish";
+                    string withErrors = "";
+                    bool hasErrored = false;
+                    jobsWithErrors.TryRemove(runningJob.Key, out hasErrored);
+                    if(hasErrored)
+                    {
+                        withErrors = " with errors";
+                    } 
+                    Log.Information($"Job {runningJob.Key} has completed{withErrors}.");
+
+                    string url = automationHelper.GetUrl() + $"/api/Job/{runningJob.Value.JobUID}/Finish?error={hasErrored.ToString()}";
                     automationHelper.PostWebCall(url, null);
                 }
                 if (jobTask.Status == TaskStatus.Faulted)
@@ -56,6 +66,10 @@ namespace EphIt.Service.Posh.Job
                     Log.Warning($"Job {runningJob.Key} faulted.");
                 }
             }
+        }
+        public void FaultJob(Guid jobId)
+        {
+            jobsWithErrors.TryAdd(jobId, true);
         }
         public void RemoveRunningJob(KeyValuePair<Guid, PoshJob> runningJob)
         {
@@ -108,6 +122,12 @@ namespace EphIt.Service.Posh.Job
             {
                 return;
             }*/
+            PowerShell ps = _poshManager.GetPowerShell();
+            if(ps == null)
+            {
+                Log.Warning("All PowerShell instances are in use.");
+                return;
+            }
             PoshJob pendingJob;
             pendingJobQueue.TryDequeue(out pendingJob);
             if(pendingJob == null)
@@ -116,7 +136,10 @@ namespace EphIt.Service.Posh.Job
             }
             try
             {
-                PoshJob runningJob = _poshManager.RunJob(pendingJob);
+                ps.AddScript(pendingJob.Script);
+                pendingJob.PoshInstance = ps;
+                pendingJob = ConfigureStreams(pendingJob);
+                PoshJob runningJob = RunJob(pendingJob);
                 if (runningJob == null)
                 {
                     retryJobs.Enqueue(pendingJob);
@@ -146,6 +169,76 @@ namespace EphIt.Service.Posh.Job
                     problemJobs.Enqueue(problemJob);
                 }
             }            
+        }
+        public void RecordStream(PoshJob poshJob, object sender, DataAddedEventArgs e)
+        {
+            //todo implement this.
+            var type = sender.GetType();
+
+            if (type == typeof(PSDataCollection<VerboseRecord>))
+            {
+                VerboseRecord record = ((PSDataCollection<VerboseRecord>)sender)[e.Index];
+            }
+            if (type == typeof(PSDataCollection<DebugRecord>))
+            {
+                DebugRecord record = ((PSDataCollection<DebugRecord>)sender)[e.Index];
+            }
+            if (type == typeof(PSDataCollection<ErrorRecord>))
+            {
+                FaultJob(poshJob.JobUID);
+                ErrorRecord record = ((PSDataCollection<ErrorRecord>)sender)[e.Index];
+            }
+            if (type == typeof(PSDataCollection<WarningRecord>))
+            {
+                WarningRecord record = ((PSDataCollection<WarningRecord>)sender)[e.Index];
+            }
+        }
+        //I know the Output isnt a stream technically... we can rename the class later.
+        public void RecordOutput(PoshJob poshJob, object sender, DataAddedEventArgs e)
+        {
+            var record = ((PSDataCollection<PSDataCollection<PSObject>>)sender)[e.Index];
+            Log.Information($"{poshJob.JobUID} Output: Type - {record[0].TypeNames[0]} Value - {record[0].BaseObject}");
+        }
+
+        public PoshJob ConfigureStreams(PoshJob poshJob)
+        {
+            //capture stream output
+            poshJob.PoshInstance.Streams.Verbose.DataAdded += delegate (object sender, DataAddedEventArgs e) {
+                RecordStream(poshJob, sender, e);
+            };
+            poshJob.PoshInstance.Streams.Debug.DataAdded += delegate (object sender, DataAddedEventArgs e) {
+                RecordStream(poshJob, sender, e);
+            };
+            poshJob.PoshInstance.Streams.Error.DataAdded += delegate (object sender, DataAddedEventArgs e) {
+                RecordStream(poshJob, sender, e);
+            };
+            poshJob.PoshInstance.Streams.Information.DataAdded += delegate (object sender, DataAddedEventArgs e) {
+                RecordStream(poshJob, sender, e);
+            };
+            poshJob.PoshInstance.Streams.Warning.DataAdded += delegate (object sender, DataAddedEventArgs e) {
+                RecordStream(poshJob, sender, e);
+            };
+            return poshJob;
+        }
+        public PoshJob RunJob(PoshJob poshJob)
+        {
+            if (poshJob.Parameters != null && poshJob.Parameters.Count != 0)
+            {
+                poshJob.PoshInstance.AddParameters(poshJob.Parameters);
+            }
+
+            poshJob.RunningJob = StartScript(poshJob);
+            Log.Information($"Job {poshJob.JobUID} started.");
+            return poshJob;
+        }
+
+        public async Task<PSDataCollection<PSObject>> StartScript(PoshJob poshJob) //maybe add withRunspace parameter in the future. I have no idea what a runspace provides.
+        {
+            PSDataCollection<PSDataCollection<PSObject>> output = new PSDataCollection<PSDataCollection<PSObject>>();
+            output.DataAdded += delegate (object sender, DataAddedEventArgs e) {
+                RecordOutput(poshJob, sender, e);
+            };
+            return await poshJob.PoshInstance.InvokeAsync<PSDataCollection<PSObject>, PSDataCollection<PSObject>>(null, output);
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell.Commands;
 using System.Collections.Concurrent;
 using System.Management.Automation;
-using EphIt.Service.Posh.Stream;
 using System.Threading.Tasks;
 using Serilog;
 
@@ -15,11 +14,9 @@ namespace EphIt.Service.Posh
     {
         private ConcurrentQueue<Runspace> _runspaceQueue;
         private ConcurrentQueue<PowerShell> _powerShellQueue;
-        private IStreamHelper _streamHelper;
-
-        public PoshManager(IStreamHelper streamHelper)
+        
+        public PoshManager()
         {
-            _streamHelper = streamHelper;
             _runspaceQueue = new ConcurrentQueue<Runspace>();
             _powerShellQueue = new ConcurrentQueue<PowerShell>();
             NewRunspaceQueue();
@@ -95,54 +92,8 @@ namespace EphIt.Service.Posh
         {
             return _powerShellQueue.Count;
         }
-        private PowerShell GetPoshInstance(PoshJob poshJob/*, Runspace runspace*/) {
-            PowerShell ps = GetPowerShell();
-            ps.AddScript(poshJob.Script);
-            //capture stream output
-            ps.Streams.Verbose.DataAdded += delegate (object sender, DataAddedEventArgs e) {
-                _streamHelper.RecordStream(poshJob, sender, e);
-            };
-            ps.Streams.Debug.DataAdded += delegate (object sender, DataAddedEventArgs e) {
-                _streamHelper.RecordStream(poshJob, sender, e);
-            };
-            ps.Streams.Error.DataAdded += delegate (object sender, DataAddedEventArgs e) {
-                _streamHelper.RecordStream(poshJob, sender, e);
-            };
-            ps.Streams.Information.DataAdded += delegate (object sender, DataAddedEventArgs e) {
-                _streamHelper.RecordStream(poshJob, sender, e);
-            };
-            ps.Streams.Warning.DataAdded += delegate (object sender, DataAddedEventArgs e) {
-                _streamHelper.RecordStream(poshJob, sender, e);
-            };
-            return ps;
-        }
-        public PoshJob RunJob(PoshJob poshJob)
-        {
-            PowerShell ps = GetPoshInstance(poshJob);
-            if (ps == null)
-            {
-                Log.Warning("All PowerShell instances are in use.");
-                return null;
-            }
-            if (poshJob.Parameters != null && poshJob.Parameters.Count != 0)
-            {
-                ps.AddParameters(poshJob.Parameters);
-            }
-            
-            poshJob.PoshInstance = ps;
-            poshJob.RunningJob = StartScript(poshJob);
-            Log.Information($"Job {poshJob.JobUID} started.");
-            return poshJob;
-        }
         
-        public async Task<PSDataCollection<PSObject>> StartScript(PoshJob poshJob) //maybe add withRunspace parameter in the future. I have no idea what a runspace provides.
-        {
-            PSDataCollection<PSDataCollection<PSObject>> output = new PSDataCollection<PSDataCollection<PSObject>>();
-            output.DataAdded += delegate (object sender, DataAddedEventArgs e) {
-                _streamHelper.RecordOutput(poshJob, sender, e);
-            };
-            return await poshJob.PoshInstance.InvokeAsync<PSDataCollection<PSObject>, PSDataCollection<PSObject>>(null, output);
-        }
+           
         public bool RunspaceAvailable()
         {
             return !_runspaceQueue.IsEmpty;
@@ -151,10 +102,6 @@ namespace EphIt.Service.Posh
         {
             return !_runspaceQueue.IsEmpty;
         }
-        public void RecordOutput(Guid jobId, PSObject result)
-        {
-            //this might be its own class someday.
-            Log.Information($"{jobId} Output: Type - {result.TypeNames[0]} Value - {result.BaseObject}");
-        }
+        
     }
 }
