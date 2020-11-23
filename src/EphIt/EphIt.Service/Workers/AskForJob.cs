@@ -9,6 +9,7 @@ using EphIt.Service.Posh.Job;
 using EphIt.Db.Models;
 using EphIt.BL.Automation;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace EphIt.Service.Workers
 {
@@ -66,20 +67,14 @@ namespace EphIt.Service.Workers
                 }
                 if (newJob != null)
                 {
-                    if(newJob.Parameters != null)
-                    {
-                        //handle parameters someday.  
-                        //the string will be json?
-                        //Dictionary<string, object> parameters = new Dictionary<string, object>();
-                        //parameters.Add("stringParam", "stringValue");
-                        //parameters.Add("intParam", 1);
-                        
-                    }
-
                     PoshJob job = new PoshJob();
                     job.JobUID = newJob.Job.JobUid;
                     job.Script = newJob.Script;
-                    if(job.Script != null)
+                    if (newJob.Parameters != null)
+                    {
+                        job.Parameters = newJob.Parameters;
+                    }
+                    if (job.Script != null)
                     {
                         _poshJobManager.QueuePendingJob(job);
                     }

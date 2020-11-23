@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace EphIt.BL.JobManager
 {
@@ -19,7 +20,7 @@ namespace EphIt.BL.JobManager
             _context = context;
             _logger = logger;
         }
-        public Guid QueueJob(ScriptVersion script, int? UserId = null, int? ScheduleId = null, int? AutomationId = null)
+        public Guid QueueJob(ScriptVersion script, string parameters, int? UserId = null, int? ScheduleId = null, int? AutomationId = null)
         {
             var newJob = new Job();
             newJob.Created = DateTime.UtcNow;
@@ -32,6 +33,14 @@ namespace EphIt.BL.JobManager
             _context.Add(newJob);
             _context.SaveChanges();
 
+            if(!string.IsNullOrEmpty(parameters))
+            {
+                JobParameters jobParameters = new JobParameters();
+                jobParameters.JobUid = newJob.JobUid;
+                jobParameters.Parameters = parameters;
+                _context.Add(jobParameters);
+                _context.SaveChanges();
+            }
             var newJobQueue = new JobQueue();
             newJobQueue.JobUid = newJob.JobUid;
             newJobQueue.Created = newJob.Created;
@@ -87,18 +96,18 @@ namespace EphIt.BL.JobManager
             }
             return job.Job;
         }
-        public Dictionary<string, object> GetJobParameters(Job job)
+        public Hashtable GetJobParameters(Job job)
         {
-            var returnDictionary = new Dictionary<string, object>();
+            var returnHash = new Hashtable();
             string parameters = _context.JobParameters
-                                    .Where(p => p.JobUid.Equals(job))
+                                    .Where(p => p.JobUid.Equals(job.JobUid))
                                     .Select(p => p.Parameters)
                                     .FirstOrDefault();
             if (!String.IsNullOrEmpty(parameters))
             {
                 try
                 {
-                    returnDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(parameters);
+                    returnHash = JsonConvert.DeserializeObject<Hashtable>(parameters);
                 }
                 catch(Exception ex)
                 {
@@ -106,7 +115,7 @@ namespace EphIt.BL.JobManager
                     throw;
                 }
             }
-            return returnDictionary;
+            return returnHash;
         }
         public void Start(Job job)
         {

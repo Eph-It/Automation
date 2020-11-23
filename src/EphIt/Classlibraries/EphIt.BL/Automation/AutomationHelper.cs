@@ -107,5 +107,6 @@ namespace EphIt.BL.Automation
         public int? ScheduleID { get; set; }
         public int? AutomationID { get; set; } //maybe should be guid?
         //maybe add a runbook server param later?
+        public string Parameters { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using EphIt.Db.Models;
 using System.Linq;
 using Newtonsoft.Json;
 using EphIt.BL.Automation;
+using System.Collections;
 
 namespace Automation
 {
@@ -48,6 +49,14 @@ namespace Automation
         )]
         public int ScheduleID { get; set; }
 
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = false,
+            Position = 3,
+            HelpMessage = "Job script parameters."
+        )]
+        public Hashtable Parameters { get; set; }
         public object GetDynamicParameters()
         {
             return DynamicParameters.dynParams(ref _staticStorage);
@@ -67,6 +76,7 @@ namespace Automation
             jobPostParameters.AutomationID = AutomationID;
             jobPostParameters.ScheduleID = ScheduleID;
             jobPostParameters.ScriptVersionID = ScriptVersionId;
+            jobPostParameters.Parameters = JsonConvert.SerializeObject(Parameters);
             string response = automationHelper.PostWebCall(url, jobPostParameters);
             if (!string.IsNullOrEmpty(response))
             {
