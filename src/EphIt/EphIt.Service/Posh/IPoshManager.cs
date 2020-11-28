@@ -12,7 +12,6 @@ namespace EphIt.Service.Posh
         public Runspace GetRunspace();
         public void RetireRunspace(Runspace runspace);
         public int GetNumberOfRemainingRunspaces();
-        public PoshJob RunJob(PoshJob poshJob);
         public bool RunspaceAvailable();
         public PowerShell NewPowerShell();
         public PowerShell GetPowerShell();
