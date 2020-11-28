@@ -10,6 +10,8 @@ using EphIt.Db.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
+using Newtonsoft.Json;
 
 namespace EphIt.Server.Controllers
 {
@@ -40,7 +42,7 @@ namespace EphIt.Server.Controllers
             ScriptVersion ver = _dbContext.ScriptVersion.Where(v => v.ScriptVersionId == postParams.ScriptVersionID).FirstOrDefault();
             if(ver != null)
             {
-                return _jobManager.QueueJob(ver, _ephItUser.Register().UserId, postParams.ScheduleID, postParams.AutomationID);
+                return _jobManager.QueueJob(ver, postParams.Parameters, _ephItUser.Register().UserId, postParams.ScheduleID, postParams.AutomationID);
             }
             return null;
         }
@@ -79,5 +81,6 @@ namespace EphIt.Server.Controllers
         public int? ScheduleID { get; set; }
         public int? AutomationID { get; set; } //maybe should be guid?
         //maybe add a runbook server param later?
+        public string Parameters { get; set; }
     }
 }

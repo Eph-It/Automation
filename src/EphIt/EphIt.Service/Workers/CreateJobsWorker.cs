@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using EphIt.Service.Posh.Job;
 using EphIt.Db.Models;
-
+using System.Collections;
 
 //this is debug stuff
 namespace EphIt.Service.Workers
@@ -48,7 +48,7 @@ namespace EphIt.Service.Workers
                 //_logger.LogInformation("Monitor Running Jobs at: {time}", DateTimeOffset.Now);
                 PoshJob job1 = new PoshJob();
                 job1.Script = TestScript;
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                Hashtable parameters = new Hashtable();
                 parameters.Add("stringParam", "stringValue");
                 parameters.Add("intParam", 1);
                 job1.Parameters = parameters;
