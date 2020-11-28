@@ -54,6 +54,24 @@ namespace EphIt.Server.Controllers
             return _jobManager.GetQueuedScriptedJob(language);
 
         }
+
+        [HttpPost]
+        [Route("/api/[controller]/{jobID}/Start")]
+        [Authorize("JobsExecute")]
+        public void StartJob(Guid jobId)
+        {
+            //is this a runbook worker or something else authorized? TODO
+            _jobManager.Start(jobId);
+        }
+
+        [HttpPost]
+        [Route("/api/[controller]/{jobID}/Finish")]
+        [Authorize("JobsExecute")]
+        public void FinishJob(Guid jobId, bool errored)
+        {
+            //is this a runbook worker or something else authorized? TODO
+            _jobManager.Finish(jobId, errored);
+        }
     }
     public class JobPostParameters
     {
