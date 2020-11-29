@@ -119,20 +119,7 @@ namespace EphIt.Blazor.Server
         }
         public void ConfigureDb(IEphItUser user, EphItContext _context)
         {
-            bool migrateDb = true;
-            try
-            {
-                migrateDb = _context.Database.EnsureCreated();
-                if (!migrateDb)
-                {
-                    migrateDb = _context.Database.GetPendingMigrations().Any();
-                }
-            }
-            catch
-            {
-                migrateDb = true;
-            }
-            if (migrateDb)
+            if (_context.Database.GetPendingMigrations().Any())
             {
                 _context.Database.Migrate();
                 var internalUser = _context.User.Where(p => p.AuthenticationId.Equals((short)AuthenticationEnum.EphItInternal)).First();

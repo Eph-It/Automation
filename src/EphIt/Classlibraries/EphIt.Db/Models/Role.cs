@@ -30,6 +30,8 @@ namespace EphIt.Db.Models
         public string Description { get; set; }
         public bool IsGlobal { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public virtual User CreatedByUser { get; set; }
         public virtual User ModifiedByUser { get; set; }
         public virtual ICollection<RoleMembershipUser> RoleMembershipUser { get; set; }

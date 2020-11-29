@@ -1,5 +1,0 @@
-﻿CREATE OR ALTER dbo.TR_Script_Audit
-ON Script
-AFTER INSERT, DELETE
-AS BEGIN
-

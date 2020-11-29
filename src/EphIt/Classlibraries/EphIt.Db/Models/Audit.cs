@@ -19,6 +19,8 @@ namespace EphIt.Db.Models
 
         public int UserId { get; set; }
 
+        public int ObjectId { get; set; }
+
         public virtual RbacAction RbacAction { get; set; }
         public virtual RbacObject RbacObject { get; set; }
 
