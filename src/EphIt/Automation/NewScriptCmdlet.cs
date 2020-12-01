@@ -10,9 +10,9 @@ using System.Linq;
 using EphIt.Db.Models;
 using EphIt.BL.Automation;
 
-namespace Automation
+namespace EnterpriseAutomation
 {
-    [Cmdlet(VerbsCommon.New, "AutomationScript")]
+    [Cmdlet(VerbsCommon.New, "EAScript")]
     [OutputType(typeof(VMScript))]
     public class NewScriptCmdlet : PSCmdlet, IDynamicParameters
     {

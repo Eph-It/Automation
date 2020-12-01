@@ -8,9 +8,9 @@ using Newtonsoft.Json;
 using EphIt.BL.Automation;
 using System.Collections;
 
-namespace Automation
+namespace EnterpriseAutomation
 {
-    [Cmdlet(VerbsCommon.New, "AutomationJob")]
+    [Cmdlet(VerbsCommon.New, "EAJob")]
     [OutputType(typeof(VMJob))]
     public class NewJobCmdlet : PSCmdlet, IDynamicParameters
     {
