@@ -12,6 +12,7 @@ namespace EphIt.Db.Models
         public RbacObject()
         {
             RoleObjectAction = new HashSet<RoleObjectAction>();
+            Audit = new HashSet<Audit>();
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -21,6 +22,7 @@ namespace EphIt.Db.Models
         public string Name { get; set; }
 
         public virtual ICollection<RoleObjectAction> RoleObjectAction { get; set; }
+        public virtual ICollection<Audit> Audit { get; set; }
     }
 
     public class RbacObjectConfiguration : IEntityTypeConfiguration<RbacObject>

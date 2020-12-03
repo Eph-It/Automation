@@ -19,6 +19,7 @@ namespace EphIt.Db.Models
             ScriptModifiedByUser = new HashSet<Script>();
             ScriptVersion = new HashSet<ScriptVersion>();
             UserActiveDirectory = new HashSet<UserActiveDirectory>();
+            Audit = new HashSet<Audit>();
         }
         [Key]
         public int UserId { get; set; }
@@ -33,6 +34,7 @@ namespace EphIt.Db.Models
         public virtual ICollection<Script> ScriptModifiedByUser { get; set; }
         public virtual ICollection<ScriptVersion> ScriptVersion { get; set; }
         public virtual ICollection<UserActiveDirectory> UserActiveDirectory { get; set; }
+        public virtual ICollection<Audit> Audit { get; set; }
     }
     public class UserConfiguration : IEntityTypeConfiguration<User>
     {
