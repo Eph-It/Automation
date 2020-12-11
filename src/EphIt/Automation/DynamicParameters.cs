@@ -5,7 +5,7 @@ using System.Management.Automation;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 
-namespace Automation
+namespace EnterpriseAutomation
 {
     class DynamicParameters
     {

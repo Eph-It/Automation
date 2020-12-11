@@ -6,9 +6,9 @@ using EphIt.Db.Models;
 using System.Linq;
 using EphIt.BL.Automation;
 
-namespace Automation
+namespace EnterpriseAutomation
 {
-    [Cmdlet(VerbsCommon.New, "AutomationScriptVersion")]
+    [Cmdlet(VerbsCommon.New, "EAScriptVersion")]
     [OutputType(typeof(VMScriptVersion))]
     public class NewScriptVersionCmdlet : PSCmdlet, IDynamicParameters
     {

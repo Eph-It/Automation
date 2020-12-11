@@ -3,7 +3,7 @@
     "Automation": {
       "commandName": "Executable",
       "executablePath": "pwsh",
-      "commandLineArgs": "-noexit -command \"&{ import-module .\\Automation.dll -verbose}\""
+      "commandLineArgs": "-noexit -command \"&{ import-module .\\EnterpriseAutomation.dll -verbose}\""
     }
   }
 }
