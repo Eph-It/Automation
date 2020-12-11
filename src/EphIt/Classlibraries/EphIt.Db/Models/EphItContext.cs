@@ -34,7 +34,7 @@ namespace EphIt.Db.Models
         public virtual DbSet<UserActiveDirectory> UserActiveDirectory { get; set; }
         public virtual DbSet<UserAzureActiveDirectory> UserAzureActiveDirectory { get; set; }
         public virtual DbSet<Audit> Audit { get; set; }
-
+        public virtual DbSet<Variable> Variable { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -67,6 +67,7 @@ namespace EphIt.Db.Models
             modelBuilder.ApplyConfiguration(new UserActiveDirectoryConfiguration());
             modelBuilder.ApplyConfiguration(new UserAzureActiveDirectoryConfiguration());
             modelBuilder.ApplyConfiguration(new AuditConfiguration());
+            modelBuilder.ApplyConfiguration(new VariableConfiguration());
         }
 
     }
