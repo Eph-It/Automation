@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-//using System.Security.Policy;
+using EphIt.Db.Enums;
 using System.Text;
 
 namespace EphIt.BL.Automation
@@ -108,5 +108,12 @@ namespace EphIt.BL.Automation
         public int? AutomationID { get; set; } //maybe should be guid?
         //maybe add a runbook server param later?
         public string Parameters { get; set; }
+    }
+    public class LogPostParameters
+    {
+        public Guid jobUid { get; set; }
+        public string message { get; set; }
+        public JobLogLevelEnum level { get; set; }
+        public string Exception { get; set; }
     }
 }

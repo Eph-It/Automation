@@ -11,7 +11,8 @@ namespace EphIt.Db.Enums
         Debug,
         Progress,
         Error,
-        Exception
+        Exception,
+        Warning
         
     }
 }

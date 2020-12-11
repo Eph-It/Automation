@@ -13,6 +13,7 @@ using EphIt.BL.JobManager;
 using EphIt.BL.Automation;
 using System.Security.Policy;
 using Microsoft.Extensions.Configuration;
+using EphIt.Db.Enums;
 
 namespace EphIt.Service.Posh.Job
 {
@@ -172,28 +173,40 @@ namespace EphIt.Service.Posh.Job
         }
         public void RecordStream(PoshJob poshJob, object sender, DataAddedEventArgs e)
         {
-            //todo implement this.
             var type = sender.GetType();
+            LogPostParameters logPostParameters = new LogPostParameters();
+            InformationalRecord record;
 
             if (type == typeof(PSDataCollection<VerboseRecord>))
             {
-                VerboseRecord record = ((PSDataCollection<VerboseRecord>)sender)[e.Index];
+                record = ((PSDataCollection<VerboseRecord>)sender)[e.Index];
+                logPostParameters.message = record.Message;
+                logPostParameters.level = JobLogLevelEnum.Verbose;
             }
             if (type == typeof(PSDataCollection<DebugRecord>))
             {
-                DebugRecord record = ((PSDataCollection<DebugRecord>)sender)[e.Index];
+                record = ((PSDataCollection<DebugRecord>)sender)[e.Index];
+                logPostParameters.message = record.Message;
+                logPostParameters.level = JobLogLevelEnum.Debug;
             }
             if (type == typeof(PSDataCollection<ErrorRecord>))
             {
                 FaultJob(poshJob.JobUID);
-                ErrorRecord record = ((PSDataCollection<ErrorRecord>)sender)[e.Index];
+                logPostParameters.level = JobLogLevelEnum.Error;
+                var errorRecord = ((PSDataCollection<ErrorRecord>)sender)[e.Index];
+                logPostParameters.Exception = errorRecord.Exception.Message;
+                logPostParameters.message = errorRecord.ScriptStackTrace; //this is where the error occured. Not sure if there is a better message for error streams
             }
             if (type == typeof(PSDataCollection<WarningRecord>))
             {
-                WarningRecord record = ((PSDataCollection<WarningRecord>)sender)[e.Index];
+                logPostParameters.level = JobLogLevelEnum.Warning;
+                record = ((PSDataCollection<WarningRecord>)sender)[e.Index];
+                logPostParameters.message = record.Message;
             }
+            logPostParameters.jobUid = poshJob.JobUID;
+            string url = automationHelper.GetUrl() + $"/api/Log/";
+            automationHelper.PostWebCall(url, logPostParameters);
         }
-        //I know the Output isnt a stream technically... we can rename the class later.
         public void RecordOutput(PoshJob poshJob, object sender, DataAddedEventArgs e)
         {
             var record = ((PSDataCollection<PSDataCollection<PSObject>>)sender)[e.Index];
