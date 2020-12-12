@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using Newtonsoft.Json;
+using Microsoft.AspNet.OData;
 
 namespace EphIt.Server.Controllers
 {
@@ -45,6 +46,12 @@ namespace EphIt.Server.Controllers
                 return _jobManager.QueueJob(ver, postParams.Parameters, _ephItUser.Register().UserId, postParams.ScheduleID, postParams.AutomationID);
             }
             return null;
+        }
+        [HttpGet]
+        [EnableQuery]
+        public IEnumerable<Job> Get()
+        {
+            return _dbContext.Job;
         }
         [HttpGet]
         [Route("/api/[controller]/Queued")]
