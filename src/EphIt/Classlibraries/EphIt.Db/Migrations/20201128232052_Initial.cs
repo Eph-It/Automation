@@ -683,6 +683,14 @@ namespace EphIt.Db.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql(@"
+                DROP TRIGGER IF EXISTS TR_Script_Audit_Update
+            ");
+            
+            migrationBuilder.Sql(@"
+                DROP TRIGGER IF EXISTS TR_Script_Audit_Insert
+            ");
+
             migrationBuilder.DropTable(
                 name: "Audit");
 
