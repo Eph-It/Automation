@@ -21,6 +21,9 @@ using Microsoft.AspNetCore.Server.IIS;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using EphIt.BL.JobManager;
 using System.Collections.Generic;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.OData.Edm;
+using Microsoft.AspNet.OData.Builder;
 
 namespace EphIt.Blazor.Server
 {
@@ -51,6 +54,7 @@ namespace EphIt.Blazor.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddOData();
             services.AddDbContext<EphItContext>(
                     options => 
                         options.UseSqlServer(Configuration.GetConnectionString("EphItDb"))
@@ -115,7 +119,16 @@ namespace EphIt.Blazor.Server
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
+                endpoints.Select().Filter().OrderBy().Count().MaxTop(10);
+                endpoints.MapODataRoute("api", "api", GetEdmModel());
             });
+        }
+        private IEdmModel GetEdmModel()
+        {
+            var odataBuilder = new ODataConventionModelBuilder();
+            odataBuilder.EntitySet<Script>("Script");
+            odataBuilder.EntitySet<Job>("Job");
+            return odataBuilder.GetEdmModel();
         }
         public void ConfigureDb(IEphItUser user, EphItContext _context)
         {

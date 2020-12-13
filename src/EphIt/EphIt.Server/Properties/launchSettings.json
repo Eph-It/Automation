@@ -13,7 +13,7 @@
       "launchBrowser": true,
       "launchUrl": "http://localhost:60904/api/script",
       "environmentVariables": {
-        "ASPNETCORE_DROPDB": "True",
+        "ASPNETCORE_DROPDB": "False",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
