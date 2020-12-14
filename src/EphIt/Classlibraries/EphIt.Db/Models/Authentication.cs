@@ -12,6 +12,7 @@ namespace EphIt.Db.Models
         public Authentication()
         {
             User = new HashSet<User>();
+            Group = new HashSet<Group>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -22,6 +23,7 @@ namespace EphIt.Db.Models
         public string Name { get; set; }
 
         public virtual ICollection<User> User { get; set; }
+        public virtual ICollection<Group> Group { get; set; }
     }
     public class AuthenticationConfiguration : IEntityTypeConfiguration<Authentication>
     {
