@@ -24,32 +24,42 @@ namespace EphIt.Server.Controllers
         }
         [HttpPost]
         [Route("/api/Variable/")]
-        [Authorize("ScriptsEdit")]
+        [Authorize("ScriptsModify")]
         public Variable New(string name, string value)
         {
-            var existingVariable = _dbContext.Variable
-                .Where(v => v.Name.Equals(name) && v.Active == true)
+            var userId = _ephItUser.Register().UserId;
+
+            var variable = _dbContext.Variable
+                .Where(v => v.Name.Equals(name))
                 .FirstOrDefault();
-            if(existingVariable != null)
+            if(variable == null)
             {
-                existingVariable.Active = false;
+                variable = new Variable();
+                variable.Name = name;
+                variable.Created = DateTime.UtcNow;
+                variable.CreatedByUserId = userId;
+                variable.Value = value;
+                _dbContext.Variable.Add(variable);
             }
-            Variable variable = new Variable();
-            variable.Active = true;
-            variable.Name = name;
-            variable.Value = value;
-            _dbContext.Variable.Add(variable);
+            else
+            {
+                variable.ModifiedByUserId = userId;
+                variable.Modified = DateTime.UtcNow;
+                variable.Value = value;
+                _dbContext.Variable.Update(variable);
+
+            }
             _dbContext.SaveChanges();
             return variable;
         }
 
         [HttpGet]
-        [Route("/api/Variable/")]
-        [Authorize("ScriptsEdit")]
-        public Variable New(string name)
+        [Route("/api/Variable/{name}")]
+        [Authorize("ScriptsRead")]
+        public Variable Get(string name)
         {
             return _dbContext.Variable
-                .Where(v => v.Name.Equals(name) && v.Active == true)
+                .Where(v => v.Name.Equals(name))
                 .FirstOrDefault();
         }
     }
