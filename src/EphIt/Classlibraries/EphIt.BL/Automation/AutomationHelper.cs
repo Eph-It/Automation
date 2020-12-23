@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using EphIt.Db.Enums;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace EphIt.BL.Automation
 {
@@ -13,6 +14,14 @@ namespace EphIt.BL.Automation
     {
         public string Server { get; set; }
         public int Port { get; set; }
+        public string AutomationModulePath { get; set; }
+        public AutomationHelper() { }
+        public AutomationHelper(IConfiguration configuration)
+        {
+            SetServer(configuration.GetSection("ServerInfo:WebServer").Value);
+            SetPort(Int32.Parse(configuration.GetSection("ServerInfo:Port").Value));
+            SetAutomationModulePath(configuration.GetSection("ServerInfo:AutomationModulePath").Value);
+        }
         public string GetUrl()
         {
             if(!Server.StartsWith("https://"))
@@ -25,6 +34,10 @@ namespace EphIt.BL.Automation
         {
             return Server;
         }
+        public string GetAutomationModulePath()
+        {
+            return AutomationModulePath;
+        }
         public void SetServer(string name)
         {
             Server = name;
@@ -32,6 +45,10 @@ namespace EphIt.BL.Automation
         public void SetPort(int port)
         {
             Port = port;
+        }
+        public void SetAutomationModulePath(string path)
+        {
+            AutomationModulePath = path;
         }
         public int GetPort()
         {

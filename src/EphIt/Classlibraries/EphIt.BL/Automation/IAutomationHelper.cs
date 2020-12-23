@@ -9,6 +9,7 @@ namespace EphIt.BL.Automation
         string GetUrl();
         void SetServer(string name);
         string GetServer();
+        string GetAutomationModulePath();
         void SetPort(int port);
         int GetPort();
         string PostWebCall(string url, object body);
