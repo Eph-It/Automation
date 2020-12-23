@@ -43,6 +43,7 @@ namespace EphIt.Server.Controllers
         }
         [HttpGet]
         [EnableQuery]
+        [Route("odata/[controller]")]
         public IEnumerable<Script> Get()
         {
             return _dbContext.Script;

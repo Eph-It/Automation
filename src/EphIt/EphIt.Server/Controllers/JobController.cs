@@ -49,6 +49,7 @@ namespace EphIt.Server.Controllers
         }
         [HttpGet]
         [EnableQuery]
+        [Route("/odata/[controller]")]
         public IEnumerable<Job> Get()
         {
             return _dbContext.Job;
