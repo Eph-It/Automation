@@ -1,29 +1,25 @@
+using EphIt.BL.Audit;
+using EphIt.BL.Authorization;
+using EphIt.BL.JobManager;
+using EphIt.BL.Script;
+using EphIt.BL.User;
+using EphIt.Db.Models;
+using Microsoft.AspNet.OData.Builder;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Linq;
-using EphIt.Db.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using EphIt.Db.Enums;
-using System;
-using Serilog;
-using EphIt.BL.Authorization;
-using EphIt.BL.User;
-using EphIt.BL.Script;
-using EphIt.BL.Audit;
 using Microsoft.Identity.Web;
-using Microsoft.AspNetCore.Server.IIS;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using EphIt.BL.JobManager;
-using System.Collections.Generic;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.OData.Edm;
-using Microsoft.AspNet.OData.Builder;
+using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EphIt.Blazor.Server
 {
@@ -120,7 +116,7 @@ namespace EphIt.Blazor.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
                 endpoints.Select().Filter().OrderBy().Count().MaxTop(10);
-                endpoints.MapODataRoute("api", "api", GetEdmModel());
+                endpoints.MapODataRoute("odata", "odata", GetEdmModel());
             });
         }
         private IEdmModel GetEdmModel()
