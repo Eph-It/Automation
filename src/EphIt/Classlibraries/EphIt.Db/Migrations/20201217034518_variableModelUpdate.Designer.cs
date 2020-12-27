@@ -4,14 +4,16 @@ using EphIt.Db.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EphIt.Db.Migrations
 {
     [DbContext(typeof(EphItContext))]
-    partial class EphItContextModelSnapshot : ModelSnapshot
+    [Migration("20201217034518_variableModelUpdate")]
+    partial class variableModelUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,110 +84,6 @@ namespace EphIt.Db.Migrations
                             AuthenticationId = (short)3,
                             Name = "AzureActiveDirectory"
                         });
-                });
-
-            modelBuilder.Entity("EphIt.Db.Models.Group", b =>
-                {
-                    b.Property<int>("GroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<short>("AuthenticationId")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("GroupId");
-
-                    b.HasIndex("AuthenticationId");
-
-                    b.ToTable("Group");
-
-                    b.HasData(
-                        new
-                        {
-                            GroupId = -1,
-                            AuthenticationId = (short)2
-                        });
-                });
-
-            modelBuilder.Entity("EphIt.Db.Models.GroupActiveDirectory", b =>
-                {
-                    b.Property<int>("GroupActiveDirectoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("nvarchar(250)")
-                        .HasMaxLength(250);
-
-                    b.Property<string>("DistinguisedName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Domain")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("SID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.HasKey("GroupActiveDirectoryId");
-
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("GroupActiveDirectory");
-                });
-
-            modelBuilder.Entity("EphIt.Db.Models.GroupAzureActiveDirectory", b =>
-                {
-                    b.Property<int>("GroupAzureActiveDirectoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GroupName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(150)")
-                        .HasMaxLength(150);
-
-                    b.Property<string>("ObjectId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.HasKey("GroupAzureActiveDirectoryId");
-
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("GroupAzureActiveDirectory");
                 });
 
             modelBuilder.Entity("EphIt.Db.Models.Job", b =>
@@ -807,33 +705,6 @@ namespace EphIt.Db.Migrations
                         .WithMany("Audit")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EphIt.Db.Models.Group", b =>
-                {
-                    b.HasOne("EphIt.Db.Models.Authentication", "Authentication")
-                        .WithMany("Group")
-                        .HasForeignKey("AuthenticationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EphIt.Db.Models.GroupActiveDirectory", b =>
-                {
-                    b.HasOne("EphIt.Db.Models.Group", "Group")
-                        .WithMany("GroupActiveDirectory")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EphIt.Db.Models.GroupAzureActiveDirectory", b =>
-                {
-                    b.HasOne("EphIt.Db.Models.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
