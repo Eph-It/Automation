@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EphIt.BL.Authorization;
+﻿using EphIt.BL.Authorization;
+using EphIt.BL.Automation;
 using EphIt.BL.JobManager;
 using EphIt.BL.Script;
 using EphIt.BL.User;
 using EphIt.Db.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections;
-using Newtonsoft.Json;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EphIt.Server.Controllers
 {
@@ -82,13 +80,21 @@ namespace EphIt.Server.Controllers
             //is this a runbook worker or something else authorized? TODO
             _jobManager.Finish(jobId, errored);
         }
-    }
-    public class JobPostParameters
-    {
-        public int ScriptVersionID { get; set; }
-        public int? ScheduleID { get; set; }
-        public int? AutomationID { get; set; } //maybe should be guid?
-        //maybe add a runbook server param later?
-        public string Parameters { get; set; }
+
+        [HttpPost]
+        [Route("/api/[controller]/{jobID}/Output")]
+        [Authorize("JobsExecute")]
+        public async Task<ActionResult<Guid>> NewOutputAsync(JobOutputPostParameters jobOutputPostParameters, [FromBody]byte[] byteArrayValue)
+        {
+            JobOutput output = new JobOutput();
+            output.ByteArrayValue = byteArrayValue;
+            output.JobUid = jobOutputPostParameters.JobUid;
+            output.JsonValue = jobOutputPostParameters.JsonValue;
+            output.OutputTime = DateTime.UtcNow;
+            output.JobOutputId = Guid.NewGuid();
+            output.Type = jobOutputPostParameters.Type;
+            await _dbContext.JobOutput.AddAsync(output);
+            return output.JobOutputId;
+        }
     }
 }

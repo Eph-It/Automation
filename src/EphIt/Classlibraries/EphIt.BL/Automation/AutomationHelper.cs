@@ -126,6 +126,12 @@ namespace EphIt.BL.Automation
         //maybe add a runbook server param later?
         public string Parameters { get; set; }
     }
+    public class JobOutputPostParameters
+    {
+        public Guid JobUid { get; set; }
+        public string Type { get; set; }
+        public string JsonValue { get; set; }
+    }
     public class LogPostParameters
     {
         public Guid jobUid { get; set; }
