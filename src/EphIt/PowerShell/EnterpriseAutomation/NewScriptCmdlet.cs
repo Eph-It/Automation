@@ -67,7 +67,7 @@ namespace EnterpriseAutomation
             string url = automationHelper.GetUrl();
             url = url + "/api/Script";
 
-            WriteVerbose($"Using URL :{url}");
+            WriteVerbose($"Using URL: {url}");
             //does it already exist?
             List<VMScript> result = automationHelper.GetWebCall<List<VMScript>>(url + $"?Name={Name}");
             bool exists = result.Any(r => r.Name.Equals(Name));

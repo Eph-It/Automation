@@ -34,9 +34,7 @@ namespace EphIt.Service.Posh.Job
             //_jobManager = jobManager;
             //_streamHelper = streamHelper;
             _poshManager = poshManager;
-            automationHelper = new AutomationHelper();
-            automationHelper.SetServer(config.GetSection("ServerInfo:WebServer").Value);
-            automationHelper.SetPort(Int32.Parse(config.GetSection("ServerInfo:Port").Value));
+            automationHelper = new AutomationHelper(config);
         }
         public void ProcessRunningJobs()
         {
@@ -62,9 +60,16 @@ namespace EphIt.Service.Posh.Job
                 }
                 if (jobTask.Status == TaskStatus.Faulted)
                 {
-                    string url = automationHelper.GetUrl() + $"/api/Job/{runningJob.Value.JobUID}/Finish?error=True";
+                    string url = automationHelper.GetUrl() + $"/api/Job/{runningJob.Value.JobUID}/Finish?Errored=True";
                     automationHelper.PostWebCall(url, null);
                     Log.Warning($"Job {runningJob.Key} faulted.");
+                    LogPostParameters lpp = new LogPostParameters();
+                    lpp.Exception = jobTask.Exception.Message;
+                    lpp.jobUid = runningJob.Value.JobUID;
+                    lpp.message = $"Job faulted. See Exception for details.";
+                    lpp.level = JobLogLevelEnum.Error;
+                    LogPoshMessage(lpp);
+                    RemoveRunningJob(runningJob);
                 }
             }
         }
@@ -137,6 +142,7 @@ namespace EphIt.Service.Posh.Job
             }
             try
             {
+                ps = InitializeAutomationComponents(ps);
                 ps.AddScript(pendingJob.Script);
                 pendingJob.PoshInstance = ps;
                 pendingJob = ConfigureStreams(pendingJob);
@@ -171,6 +177,26 @@ namespace EphIt.Service.Posh.Job
                 }
             }            
         }
+        private PowerShell InitializeAutomationComponents(PowerShell ps)
+        {
+            string url = automationHelper.GetUrl();
+            if(url.Split(":").Count() > 1)
+            {
+                var splits = url.Split(":");
+                url = splits[0] + ":" + splits[1];
+            }
+            int port = automationHelper.GetPort();
+            string modulePath = automationHelper.GetAutomationModulePath();
+            
+            string defaultPortCommand = "$PSDefaultParameterValues=@{\"Get-AutomationVariable:AutomationServerPort\"=" + port.ToString() + "};";
+            string defaultServerCommand = "$PSDefaultParameterValues.Add(\"Get-AutomationVariable:AutomationServerName\", \"" + url + "\");";
+            string importModuleCommand = $"Import-Module \"{modulePath}\";";
+            string defaultParameterScript = defaultPortCommand + defaultServerCommand + importModuleCommand;
+            ps.AddScript(defaultParameterScript);
+            //ps.AddCommand(defaultServerCommand);
+            //ps.AddCommand(importModuleCommand);
+            return ps;
+        }
         public void RecordStream(PoshJob poshJob, object sender, DataAddedEventArgs e)
         {
             var type = sender.GetType();
@@ -204,15 +230,21 @@ namespace EphIt.Service.Posh.Job
                 logPostParameters.message = record.Message;
             }
             logPostParameters.jobUid = poshJob.JobUID;
-            string url = automationHelper.GetUrl() + $"/api/Log/";
-            automationHelper.PostWebCall(url, logPostParameters);
+            LogPoshMessage(logPostParameters);
         }
         public void RecordOutput(PoshJob poshJob, object sender, DataAddedEventArgs e)
         {
             var record = ((PSDataCollection<PSDataCollection<PSObject>>)sender)[e.Index];
+            //work needed here, send to server 
+            //TODO
             Log.Information($"{poshJob.JobUID} Output: Type - {record[0].TypeNames[0]} Value - {record[0].BaseObject}");
         }
 
+        private void LogPoshMessage(LogPostParameters logPostParameters)
+        {
+            string url = automationHelper.GetUrl() + $"/api/Log/";
+            automationHelper.PostWebCall(url, logPostParameters);
+        }
         public PoshJob ConfigureStreams(PoshJob poshJob)
         {
             //capture stream output
