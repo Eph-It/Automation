@@ -38,6 +38,7 @@ namespace EphIt.Db.Models
         public virtual DbSet<Group> Group { get; set; }
         public virtual DbSet<GroupActiveDirectory> GroupActiveDirectory { get; set; }
         public virtual DbSet<GroupAzureActiveDirectory> GroupAzureActiveDirectory { get; set; }
+        public virtual DbSet<JobOutput> JobOutput { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -74,6 +75,7 @@ namespace EphIt.Db.Models
             modelBuilder.ApplyConfiguration(new GroupConfiguration());
             modelBuilder.ApplyConfiguration(new GroupActiveDirectoryConfiguration());
             modelBuilder.ApplyConfiguration(new GroupAzureActiveDirectoryConfiguration());
+            modelBuilder.ApplyConfiguration(new JobOutputConfiguration());
         }
 
     }

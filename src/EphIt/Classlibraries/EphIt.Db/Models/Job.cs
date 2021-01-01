@@ -12,6 +12,7 @@ namespace EphIt.Db.Models
         public Job()
         {
             JobLog = new HashSet<JobLog>();
+            JobOutput = new HashSet<JobOutput>();
         }
 
         [Key]
@@ -32,6 +33,7 @@ namespace EphIt.Db.Models
         public virtual ICollection<JobLog> JobLog { get; set; }
         public virtual JobQueue JobQueue { get; set; }
         public virtual JobParameters JobParameters { get; set; }
+        public virtual ICollection<JobOutput> JobOutput { get; set; }
     }
     public class JobConfiguration : IEntityTypeConfiguration<Job>
     {
