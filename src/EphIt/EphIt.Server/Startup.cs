@@ -36,6 +36,7 @@ namespace EphIt.Blazor.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
             var configSection = Configuration.GetSection("EphItSettings");
             if(!String.IsNullOrEmpty(configSection["AzureADAuthentication"]))
             {
@@ -55,7 +56,7 @@ namespace EphIt.Blazor.Server
                     options => 
                         options.UseSqlServer(Configuration.GetConnectionString("EphItDb"))
                     );
-            services.AddHttpContextAccessor();
+            
             services.AddScoped<IEphItUser, EphItUser>();
             services.AddScoped<IUserAuthorization, UserAuthorization>();
             services.AddScoped<IScriptManager, ScriptManager>();
