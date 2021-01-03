@@ -13,6 +13,7 @@ namespace EphIt.Db.Models
         {
             JobLog = new HashSet<JobLog>();
             JobOutput = new HashSet<JobOutput>();
+            JobObjectIds = new HashSet<VRBACJobToObjectId>();
         }
 
         [Key]
@@ -34,6 +35,7 @@ namespace EphIt.Db.Models
         public virtual JobQueue JobQueue { get; set; }
         public virtual JobParameters JobParameters { get; set; }
         public virtual ICollection<JobOutput> JobOutput { get; set; }
+        public virtual ICollection<VRBACJobToObjectId> JobObjectIds { get; set; }
     }
     public class JobConfiguration : IEntityTypeConfiguration<Job>
     {
@@ -50,7 +52,8 @@ namespace EphIt.Db.Models
                 .WithMany(p => p.Jobs)
                 .HasForeignKey(key => key.ScriptVersionId)
                 .OnDelete(DeleteBehavior.Restrict);
-           
+
+            builder.HasQueryFilter(filter => filter.JobObjectIds.Count > 0);
         }
     }
 }
