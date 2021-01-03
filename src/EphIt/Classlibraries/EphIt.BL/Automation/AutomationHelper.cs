@@ -131,6 +131,7 @@ namespace EphIt.BL.Automation
         public Guid JobUid { get; set; }
         public string Type { get; set; }
         public string JsonValue { get; set; }
+        public byte[] ByteArrayValue { get; set; }
     }
     public class LogPostParameters
     {

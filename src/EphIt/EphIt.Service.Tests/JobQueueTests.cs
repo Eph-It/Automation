@@ -1,7 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EphIt.Service.Posh;
 using EphIt.Service.Posh.Job;
-using EphIt.Service.Posh.Stream;
 using Moq;
 using EphIt.BL.JobManager;
 using EphIt.Db.Models;
@@ -17,7 +16,7 @@ namespace EphIt.Service.Tests
     [TestClass]
     public class JobQueueTests
     {
-        private Mock<IStreamHelper> streamMoq;
+        /*private Mock<IStreamHelper> streamMoq;
         private IPoshManager poshManager;
         private EphItContext ephItContext;
         private Mock<ILogger<EphIt.BL.JobManager.JobManager>> logger;
@@ -86,7 +85,7 @@ namespace EphIt.Service.Tests
             poshJobManager.QueuePendingJob(this.job);
             poshJobManager.StartPendingJob();
         }
-        /* unsure how to test this
+         unsure how to test this
         [TestMethod]
         public void ShouldRecordVerboseLog()
         {
