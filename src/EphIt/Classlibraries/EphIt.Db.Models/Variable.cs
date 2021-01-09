@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,12 +16,6 @@ namespace EphIt.Db.Models
         public DateTime Modified { get; set; }
         public int ModifiedByUserId { get; set; }
     }
-    public class VariableConfiguration : IEntityTypeConfiguration<Variable>
-    {
-        public void Configure(EntityTypeBuilder<Variable> builder)
-        {
-            builder.HasKey(d => d.VariableId);
-        }
-    }
+    
 
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -34,19 +32,5 @@ namespace EphIt.Db.Models
         public virtual ICollection<RoleObjectScopeScript> RoleObjectScopeScript { get; set; }
         public virtual ICollection<ScriptVersion> ScriptVersion { get; set; }
     }
-    public class ScriptConfiguration : IEntityTypeConfiguration<Script>
-    {
-        public void Configure(EntityTypeBuilder<Script> builder)
-        {
-            builder.HasOne(d => d.CreatedByUser)
-                .WithMany(p => p.ScriptCreatedByUser)
-                .HasForeignKey(d => d.CreatedByUserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(d => d.ModifiedByUser)
-                .WithMany(p => p.ScriptModifiedByUser)
-                .HasForeignKey(d => d.ModifiedByUserId)
-                .OnDelete(DeleteBehavior.Restrict);
-        }
-    }
+    
 }

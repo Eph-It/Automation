@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EphIt.Db.Models
@@ -33,14 +29,5 @@ namespace EphIt.Db.Models
 
         public virtual User User { get; set; }
     }
-    public class UserActiveDirectoryConfiguration : IEntityTypeConfiguration<UserActiveDirectory>
-    {
-        public void Configure(EntityTypeBuilder<UserActiveDirectory> builder)
-        {
-            builder.HasOne(d => d.User)
-                .WithMany(p => p.UserActiveDirectory)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
+    
 }
