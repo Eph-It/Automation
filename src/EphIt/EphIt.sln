@@ -23,7 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnterpriseAutomation", "PowerShell\EnterpriseAutomation\EnterpriseAutomation.csproj", "{9CA4FB3D-EE38-429F-B613-059C9AB8E48F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automation", "PowerShell\Automation\Automation.csproj", "{08E18086-275C-4214-A06D-0FF2F1A0803E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Automation", "PowerShell\Automation\Automation.csproj", "{08E18086-275C-4214-A06D-0FF2F1A0803E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EphIt.UI", "Classlibraries\EphIt.UI\EphIt.UI.csproj", "{647BC2A7-3637-4EE3-BF3E-C002A63D9F59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +69,10 @@ Global
 		{08E18086-275C-4214-A06D-0FF2F1A0803E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08E18086-275C-4214-A06D-0FF2F1A0803E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08E18086-275C-4214-A06D-0FF2F1A0803E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{647BC2A7-3637-4EE3-BF3E-C002A63D9F59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{647BC2A7-3637-4EE3-BF3E-C002A63D9F59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{647BC2A7-3637-4EE3-BF3E-C002A63D9F59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{647BC2A7-3637-4EE3-BF3E-C002A63D9F59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{71497FBF-A395-4A43-853D-31BFE6F6CCFB} = {33612611-DEB3-4683-8F22-405F063A1284}
 		{9CA4FB3D-EE38-429F-B613-059C9AB8E48F} = {24974DAD-8E6F-4DFD-B1FC-E2691EB6328C}
 		{08E18086-275C-4214-A06D-0FF2F1A0803E} = {24974DAD-8E6F-4DFD-B1FC-E2691EB6328C}
+		{647BC2A7-3637-4EE3-BF3E-C002A63D9F59} = {33612611-DEB3-4683-8F22-405F063A1284}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A86F4A4-A07E-4A97-BB90-2B5F7C3CDC0F}
