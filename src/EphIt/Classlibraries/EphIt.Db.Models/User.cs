@@ -1,9 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EphIt.Db.Models
 {
@@ -36,20 +32,5 @@ namespace EphIt.Db.Models
         public virtual ICollection<UserActiveDirectory> UserActiveDirectory { get; set; }
         public virtual ICollection<Audit> Audit { get; set; }
     }
-    public class UserConfiguration : IEntityTypeConfiguration<User>
-    {
-        public void Configure(EntityTypeBuilder<User> builder)
-        {
-            builder.HasOne(d => d.Authentication)
-                .WithMany(p => p.User)
-                .HasForeignKey(d => d.AuthenticationId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasData(new User()
-            {
-                AuthenticationId = (short)AuthenticationEnum.EphItInternal,
-                UserId = -1
-            });
-        }
-    }
+    
 }

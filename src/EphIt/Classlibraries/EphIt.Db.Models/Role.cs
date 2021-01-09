@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -38,19 +36,5 @@ namespace EphIt.Db.Models
         public virtual ICollection<RoleObjectAction> RoleObjectAction { get; set; }
         public virtual ICollection<RoleObjectScopeScript> RoleObjectScopeScript { get; set; }
     }
-    public class RoleConfiguration : IEntityTypeConfiguration<Role>
-    {
-        public void Configure(EntityTypeBuilder<Role> builder)
-        {
-            builder.HasOne(p => p.CreatedByUser)
-                .WithMany(d => d.RoleCreatedByUser)
-                .HasForeignKey(key => key.CreatedByUserId)
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(p => p.ModifiedByUser)
-                .WithMany(d => d.RoleModifiedByUser)
-                .HasForeignKey(key => key.ModifiedByUserId)
-                .OnDelete(DeleteBehavior.Restrict);
-            
-        }
-    }
+    
 }

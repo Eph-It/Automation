@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -28,14 +26,5 @@ namespace EphIt.Db.Models
 
         public virtual Group Group { get; set; }
     }
-    public class GroupActiveDirectoryConfiguration : IEntityTypeConfiguration<GroupActiveDirectory>
-    {
-        public void Configure(EntityTypeBuilder<GroupActiveDirectory> builder)
-        {
-            builder.HasOne(d => d.Group)
-                .WithMany(p => p.GroupActiveDirectory)
-                .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
+    
 }
