@@ -9,11 +9,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using EphIt.Db.Models;
 using EphIt.BL.Automation;
+using Simple.OData.Client;
+using EphIt.UI;
 
 namespace EnterpriseAutomation
 {
     [Cmdlet(VerbsCommon.New, "EAScript")]
-    [OutputType(typeof(VMScript))]
+    [OutputType(typeof(Script))]
     public class NewScriptCmdlet : PSCmdlet, IDynamicParameters
     {
         private static RuntimeDefinedParameterDictionary _staticStorage;
@@ -62,43 +64,32 @@ namespace EnterpriseAutomation
             automationHelper.SetServer(server);
             base.BeginProcessing();
         }
-        protected override void ProcessRecord()
+        protected async override void ProcessRecord()
         {
-            string url = automationHelper.GetUrl();
-            url = url + "/api/Script";
-
-            WriteVerbose($"Using URL: {url}");
-            //does it already exist?
-            List<VMScript> result = automationHelper.GetWebCall<List<VMScript>>(url + $"?Name={Name}");
-            bool exists = result.Any(r => r.Name.Equals(Name));
-            if (exists)
+            var eaOdata = new EAOdata("https://localhost:44354");
+            var oData = eaOdata.GetClient();
+            var entries = await oData.For<Script>().Filter(p => p.Name == Name).FindEntriesAsync();
+            if (entries.Any())
             {
-                WriteVerbose($"Script already exists.");
+                WriteVerbose("Script already exists");
                 return;
             }
+            var createdScript = await oData.For<Script>()
+                .Set(new { 
+                    Name = Name,
+                    Description = Description
+                }).InsertEntryAsync();
 
-            //create new
-            ScriptPostParameters postParams = new ScriptPostParameters();
-            postParams.Description = Description;
-            postParams.Name = Name;
-            string scriptID = automationHelper.PostWebCall(url, postParams);
-            
-            //create version
-            if(!string.IsNullOrEmpty(Body))
-            {
-                url = automationHelper.GetUrl() + $"/api/Script/{scriptID}/Version";
-                ScriptVersionPostParameters verPostParms = new ScriptVersionPostParameters();
-                verPostParms.ScriptBody = Body;
-                verPostParms.ScriptLanguageId = 2; //this needs to be dynamic someday
-                string versionID = automationHelper.PostWebCall(url, verPostParms);
-                WriteVerbose($"Version ID: {versionID}");
-            }
 
-            //return script object
-            url = automationHelper.GetUrl() + $"/api/Script/{scriptID}";
-            WriteObject(automationHelper.GetWebCall<VMScript>(url));
-            
-            base.ProcessRecord();
+            var createdVersion = await oData.For<ScriptVersion>()
+                .Set(new
+                {
+                    Body = Body,
+                    ScriptLanguageId = 2,
+                    ScriptId = createdScript.ScriptId
+                }).InsertEntryAsync();
+
+            //WriteObject(createdScript);
         }
         protected override void EndProcessing()
         {

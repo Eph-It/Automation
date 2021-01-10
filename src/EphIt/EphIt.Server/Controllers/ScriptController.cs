@@ -6,6 +6,7 @@ using EphIt.BL.Authorization;
 using EphIt.BL.Script;
 using EphIt.BL.User;
 using EphIt.Db.Models;
+using EphIt.UI;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -44,10 +45,42 @@ namespace EphIt.Server.Controllers
         [HttpGet]
         [EnableQuery]
         [Route("odata/[controller]")]
-        public IEnumerable<Script> Get()
+        public IQueryable<Script> Get()
         {
             return _dbContext.Script;
         }
+        [EnableQuery]
+        [HttpGet]
+        [Route("odata/[controller]")]
+        public SingleResult<Script> Get([FromODataUri] int ScriptId)
+        {
+            return SingleResult.Create(_dbContext.Script.Where(p => p.ScriptId == ScriptId));
+        }
+        [HttpPost]
+        [Route("odata/[controller]")]
+        [Authorize("ScriptsModify")]
+        public async Task<IActionResult> Post([FromBody]Script script)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(_dbContext.Script.Where(p => p.Name.Equals(script.Name)).Any())
+            {
+                return BadRequest();
+            }
+            var user = _ephItUser.RegisterCurrent();
+            script.IsDeleted = false;
+            script.Created = DateTime.UtcNow;
+            script.CreatedByUserId = user.UserId;
+            script.Modified = DateTime.UtcNow;
+            script.ModifiedByUserId = user.UserId;
+            _dbContext.Script.Add(script);
+            await _dbContext.SaveChangesAsync();
+            return Ok(script);
+        }
+
         [HttpGet]
         [Route("/api/[controller]")]
         public async Task<ActionResult<IEnumerable<VMScript>>> GetAsync(string Name)

@@ -15,6 +15,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Identity.Web" Version="1.1.0" />
+    <PackageReference Include="Microsoft.OData.Client" Version="7.8.1" />
     <PackageReference Include="Microsoft.SqlServer.DacFx" Version="150.4897.1" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Classlibraries\EphIt.BL\EphIt.BL.csproj" />
+    <ProjectReference Include="..\Classlibraries\EphIt.UI\EphIt.UI.csproj" />
     <ProjectReference Include="..\EphIt.Blazor\EphIt.Blazor.csproj" />
     <ProjectReference Include="..\Classlibraries\EphIt.Db\EphIt.Db.csproj" />
   </ItemGroup>

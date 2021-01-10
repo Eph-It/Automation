@@ -11,5 +11,8 @@ namespace EphIt.UI.Script
             _odataClient = odataClient;
         }
 
+        public void Get()
+        {
+        }
     }
 }

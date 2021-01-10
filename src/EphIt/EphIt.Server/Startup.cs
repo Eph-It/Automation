@@ -124,6 +124,7 @@ namespace EphIt.Blazor.Server
             var odataBuilder = new ODataConventionModelBuilder();
             odataBuilder.EntitySet<Script>("Script");
             odataBuilder.EntitySet<Job>("Job");
+            odataBuilder.EntitySet<ScriptVersion>("ScriptVersion");
             return odataBuilder.GetEdmModel();
         }
         public void ConfigureDb(IEphItUser user, EphItContext _context)

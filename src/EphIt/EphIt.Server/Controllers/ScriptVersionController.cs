@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EphIt.BL.User;
 using EphIt.Db.Models;
+using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,57 @@ namespace EphIt.Server.Controllers
                 p.ScriptId.Equals(scriptId)
                 && p.ScriptVersionId.Equals(VersionId)
             ).ToList();
+        }
+        [HttpGet]
+        [EnableQuery]
+        [Route("odata/[controller]")]
+        public IQueryable<ScriptVersion> Get()
+        {
+            return _dbContext.ScriptVersion;
+        }
+        [EnableQuery]
+        [HttpGet]
+        [Route("odata/[controller]")]
+        public SingleResult<ScriptVersion> Get([FromODataUri] int ScriptVersionId)
+        {
+            return SingleResult.Create(_dbContext.ScriptVersion.Where(p => p.ScriptVersionId == ScriptVersionId));
+        }
+        [HttpPost]
+        [Route("odata/[controller]")]
+        [Authorize("ScriptsModify")]
+        public async Task<IActionResult> Post([FromBody] ScriptVersion scriptVersion)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = _ephItUser.RegisterCurrent();
+
+            var script = _dbContext.Script.Where(p => p.ScriptId == scriptVersion.ScriptId).FirstOrDefault();
+            if(script == null)
+            {
+                return BadRequest();
+            }
+            
+            script.ModifiedByUserId = user.UserId;
+            script.Modified = DateTime.UtcNow;
+            await _dbContext.SaveChangesAsync();
+
+            scriptVersion.CreatedByUserId = user.UserId;
+            scriptVersion.Version = 1;
+            scriptVersion.Created = DateTime.UtcNow;
+
+            int? maxScriptVersion = _dbContext.ScriptVersion
+                .Where(p => p.ScriptId.Equals(scriptVersion.ScriptId))
+                .OrderByDescending(p => p.Version)
+                .Select(p => p.Version)
+                .FirstOrDefault();
+            if (maxScriptVersion.HasValue) { scriptVersion.Version = maxScriptVersion.Value; }
+
+            _dbContext.ScriptVersion.Add(scriptVersion);
+            await _dbContext.SaveChangesAsync();
+            return Ok(scriptVersion);
         }
         [HttpPost]
         [Route("Script/{scriptId}/Version")]
