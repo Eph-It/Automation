@@ -67,8 +67,6 @@ namespace EnterpriseAutomation
         protected async override void ProcessRecord()
         {
             var uri = $"https://{_server}:{_port}";
-            Console.WriteLine(uri);
-            
             var eaOdata = new EAOdata(uri);
             var oData = eaOdata.GetClient();
             var entries = await oData.For<Script>().Filter(p => p.Name == Name).FindEntriesAsync();
