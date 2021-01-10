@@ -56,17 +56,20 @@ namespace EnterpriseAutomation
         {
             return DynamicParameters.dynParams(ref _staticStorage);
         }
+        private string _server;
+        private int _port;
         protected override void BeginProcessing()
         {
-            string server = (string)_staticStorage.Values.Where(v => v.Name.Equals("Server")).Select(s => s.Value).FirstOrDefault();
-            int port = (int)_staticStorage.Values.Where(v => v.Name.Equals("Port")).Select(s => s.Value).FirstOrDefault();
-            automationHelper.SetPort(port);
-            automationHelper.SetServer(server);
+            _server = (string)_staticStorage.Values.Where(v => v.Name.Equals("Server")).Select(s => s.Value).FirstOrDefault();
+            _port = (int)_staticStorage.Values.Where(v => v.Name.Equals("Port")).Select(s => s.Value).FirstOrDefault();
             base.BeginProcessing();
         }
         protected async override void ProcessRecord()
         {
-            var eaOdata = new EAOdata("https://localhost:44354");
+            var uri = $"https://{_server}:{_port}";
+            Console.WriteLine(uri);
+            
+            var eaOdata = new EAOdata(uri);
             var oData = eaOdata.GetClient();
             var entries = await oData.For<Script>().Filter(p => p.Name == Name).FindEntriesAsync();
             if (entries.Any())
