@@ -81,14 +81,17 @@ namespace EnterpriseAutomation
                     Description = Description
                 }).InsertEntryAsync();
 
-
-            var createdVersion = await oData.For<ScriptVersion>()
-                .Set(new
-                {
-                    Body = Body,
-                    ScriptLanguageId = 2,
-                    ScriptId = createdScript.ScriptId
-                }).InsertEntryAsync();
+            if (!String.IsNullOrEmpty(Body))
+            {
+                var createdVersion = await oData.For<ScriptVersion>()
+                    .Set(new
+                    {
+                        Body = Body,
+                        ScriptLanguageId = 2,
+                        ScriptId = createdScript.ScriptId
+                    }).InsertEntryAsync();
+            }
+            
 
             //WriteObject(createdScript);
         }
