@@ -13,6 +13,7 @@ namespace EphIt.Db.Models
         {
             RoleObjectScopeScript = new HashSet<RoleObjectScopeScript>();
             ScriptVersion = new HashSet<ScriptVersion>();
+            ScriptRoles = new HashSet<VRBACScript>();
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -33,6 +34,8 @@ namespace EphIt.Db.Models
         public virtual User ModifiedByUser { get; set; }
         public virtual ICollection<RoleObjectScopeScript> RoleObjectScopeScript { get; set; }
         public virtual ICollection<ScriptVersion> ScriptVersion { get; set; }
+        public virtual ICollection<VRBACScript> ScriptRoles { get; set; }
+        public virtual ICollection<VRBACScriptToObjectId> ScriptObjectIds { get; set; }
     }
     public class ScriptConfiguration : IEntityTypeConfiguration<Script>
     {
@@ -47,6 +50,10 @@ namespace EphIt.Db.Models
                 .WithMany(p => p.ScriptModifiedByUser)
                 .HasForeignKey(d => d.ModifiedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasQueryFilter(filter => !filter.IsDeleted);
+            builder.HasQueryFilter(filter => filter.ScriptObjectIds.Count > 0);
+            
         }
     }
 }
