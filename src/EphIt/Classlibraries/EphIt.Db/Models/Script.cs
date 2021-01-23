@@ -51,7 +51,6 @@ namespace EphIt.Db.Models
                 .HasForeignKey(d => d.ModifiedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasQueryFilter(filter => !filter.IsDeleted);
             builder.HasQueryFilter(filter => filter.ScriptObjectIds.Count > 0);
             
         }

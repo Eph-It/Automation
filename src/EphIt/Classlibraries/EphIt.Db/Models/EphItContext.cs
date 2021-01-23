@@ -92,6 +92,8 @@ namespace EphIt.Db.Models
         public virtual DbSet<JobOutput> JobOutput { get; set; }
         public virtual DbSet<VRBACScript> VRBACScript { get; set; }
         public virtual DbSet<VRBACScriptToObjectId> VRBACScriptToObjectId { get; set; }
+        public virtual DbSet<VRBACJobToObjectId> VRBACJobToObjectId { get; set; }
+        public virtual DbSet<VRBACScriptVersionToObjectId> VRBACScriptVersionToObjectId { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -131,6 +133,8 @@ namespace EphIt.Db.Models
             modelBuilder.ApplyConfiguration(new JobOutputConfiguration());
             modelBuilder.ApplyConfiguration(new VRBACScriptConfiguration());
             modelBuilder.ApplyConfiguration(new VRBACScriptToObjectIdConfiguration(this));
+            modelBuilder.ApplyConfiguration(new VRBACJobToObjectIdConfiguration(this));
+            modelBuilder.ApplyConfiguration(new VRBACScriptVersionToObjectIdConfiguration(this));
         }
 
     }

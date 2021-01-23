@@ -11,6 +11,7 @@ namespace EphIt.Db.Models
         public ScriptVersion()
         {
             Jobs = new HashSet<Job>();
+            ScriptVersionObjectIds = new HashSet<VRBACScriptVersionToObjectId>();
         }
         public int ScriptVersionId { get; set; }
         [Required]
@@ -26,6 +27,8 @@ namespace EphIt.Db.Models
         public virtual Script Script { get; set; }
         public virtual ScriptLanguage ScriptLanguage { get; set; }
         public virtual ICollection<Job> Jobs { get; set; }
+
+        public virtual ICollection<VRBACScriptVersionToObjectId> ScriptVersionObjectIds { get; set; }
     }
     public class ScriptVersionConfiguration : IEntityTypeConfiguration<ScriptVersion>
     {
@@ -45,6 +48,8 @@ namespace EphIt.Db.Models
                 .WithMany(p => p.ScriptVersion)
                 .HasForeignKey(d => d.ScriptLanguageId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasQueryFilter(filter => filter.ScriptVersionObjectIds.Count > 0);
         }
     }
 }
