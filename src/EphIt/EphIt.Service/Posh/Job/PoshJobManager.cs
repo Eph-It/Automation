@@ -188,6 +188,13 @@ namespace EphIt.Service.Posh.Job
             int port = automationHelper.GetPort();
             string modulePath = automationHelper.GetAutomationModulePath();
             
+            if(!System.IO.File.Exists(modulePath) && !System.IO.Directory.Exists(modulePath))
+            {
+                //load something fromthe database?
+                Log.Logger.Error("Automation Module not found.");
+
+            }
+            //check / verify hash value someday TODO
             string defaultPortCommand = "$PSDefaultParameterValues=@{\"Get-AutomationVariable:AutomationServerPort\"=" + port.ToString() + "};";
             string defaultServerCommand = "$PSDefaultParameterValues.Add(\"Get-AutomationVariable:AutomationServerName\", \"" + url + "\");";
             string importModuleCommand = $"Import-Module \"{modulePath}\";";

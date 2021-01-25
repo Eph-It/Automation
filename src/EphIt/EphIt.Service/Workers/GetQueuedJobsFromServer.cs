@@ -13,18 +13,16 @@ using Newtonsoft.Json;
 
 namespace EphIt.Service.Workers
 {
-    public class AskForJob : BackgroundService
+    public class GetQueuedJobsFromServer : BackgroundService
     {
         private readonly ILogger<StartPendingJobsWorker> _logger;
         private IPoshJobManager _poshJobManager;
         private IAutomationHelper _automationHelper;
-        public AskForJob(ILogger<StartPendingJobsWorker> logger, IPoshJobManager poshJobManager, IConfiguration config)
+        public GetQueuedJobsFromServer(ILogger<StartPendingJobsWorker> logger, IPoshJobManager poshJobManager, IConfiguration config)
         {
             _poshJobManager = poshJobManager;
             _logger = logger;
-            _automationHelper = new AutomationHelper();
-            _automationHelper.SetServer(config.GetSection("ServerInfo:WebServer").Value);
-            _automationHelper.SetPort(Int32.Parse(config.GetSection("ServerInfo:Port").Value));
+            _automationHelper = new AutomationHelper(config);
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -57,8 +55,12 @@ namespace EphIt.Service.Workers
                 }
                 catch (Exception e)
                 {
-                    if(!e.InnerException.Message.Equals("No connection could be made because the target machine actively refused it.")){
-                        _logger.LogError(e, "Something went wrong trying to get queued job.");
+                    if(null != e.InnerException)
+                    {
+                        if (e.InnerException.Message.Equals("No connection could be made because the target machine actively refused it."))
+                        {
+                            _logger.LogError("Something went wrong trying to get queued job.");
+                        }
                     }
                     else
                     {
@@ -83,7 +85,7 @@ namespace EphIt.Service.Workers
                         _logger.LogWarning("No script version found.");
                     }
                 }
-                await Task.Delay(2000, stoppingToken);
+                await Task.Delay(_automationHelper.GetGetQueuedJobDelay(), stoppingToken);
             }
         }
     }
