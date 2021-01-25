@@ -43,12 +43,6 @@ namespace EphIt.BL.Authorization
         }
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, EphItAuthRequirement requirement)
         {
-            var noAuth = System.Environment.GetEnvironmentVariable("NOAUTH");
-            if (noAuth == "True")
-            {
-                context.Succeed(requirement);
-                return;
-            }
             _userAuth.SetAuthenticatedWith(null);
             if (!context.User.Identity.IsAuthenticated)
             {
