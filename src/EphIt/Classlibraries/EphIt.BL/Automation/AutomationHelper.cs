@@ -15,12 +15,15 @@ namespace EphIt.BL.Automation
         public string Server { get; set; }
         public int Port { get; set; }
         public string AutomationModulePath { get; set; }
+        public int GetQueuedJobDelay { get; set; }
         public AutomationHelper() { }
         public AutomationHelper(IConfiguration configuration)
         {
             SetServer(configuration.GetSection("ServerInfo:WebServer").Value);
             SetPort(Int32.Parse(configuration.GetSection("ServerInfo:Port").Value));
             SetAutomationModulePath(configuration.GetSection("ServerInfo:AutomationModulePath").Value);
+            SetGetQueuedJobDelay(Int32.Parse(configuration.GetSection("ServerInfo:GetQueuedJobDelay").Value));
+            
         }
         public string GetUrl()
         {
@@ -38,6 +41,10 @@ namespace EphIt.BL.Automation
         {
             return AutomationModulePath;
         }
+        public int GetGetQueuedJobDelay()
+        {
+            return GetQueuedJobDelay;
+        }
         public void SetServer(string name)
         {
             Server = name;
@@ -49,6 +56,10 @@ namespace EphIt.BL.Automation
         public void SetAutomationModulePath(string path)
         {
             AutomationModulePath = path;
+        }
+        public void SetGetQueuedJobDelay(int value)
+        {
+            GetQueuedJobDelay = value;
         }
         public int GetPort()
         {
@@ -66,16 +77,9 @@ namespace EphIt.BL.Automation
             var bytes = Encoding.ASCII.GetBytes(postJson);
             requestStream.Write(bytes, 0, bytes.Length);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Display the status.
-            // Console.WriteLine(response.StatusDescription);
-            // Get the stream containing content returned by the server.
             Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
             StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
             string responseFromServer = reader.ReadToEnd();
-            // Display the content.
-            // Cleanup the streams and the response.
             reader.Close();
             dataStream.Close();
             response.Close();
@@ -88,14 +92,9 @@ namespace EphIt.BL.Automation
             request.Credentials = CredentialCache.DefaultCredentials;
             request.ContentType = "application/json";
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Display the status.
-            // Get the stream containing content returned by the server.
             Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
             StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
             string responseFromServer = reader.ReadToEnd();
-            // Cleanup the streams and the response.
             reader.Close();
             dataStream.Close();
             response.Close();
