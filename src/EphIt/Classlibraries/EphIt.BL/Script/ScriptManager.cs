@@ -202,5 +202,43 @@ namespace EphIt.BL.Script
             await _auditLogger.AuditLog(AuditObject.ScriptVersion, AuditAction.Create, AuditStatus.Success, newVersion.ScriptVersionId);
             return newVersion.ScriptVersionId;
         }
+        public async Task<VMScript> PublishVersionAsync(int scriptId, int? scriptVersionID) 
+        {
+            int versionToPublish = -1;
+            if(scriptVersionID.HasValue) { 
+                 if(!_dbContext.ScriptVersion.Where(v => v.ScriptId == scriptId && v.ScriptVersionId == scriptVersionID.Value).Any()) {
+                     Log.Warning($"ScriptVersion {scriptVersionID} does not exist for script {scriptId}");
+                     return null;
+                 }
+                 versionToPublish = scriptVersionID.Value;
+            }
+            else {
+                try {
+                    versionToPublish = GetLatestVersionID(scriptId);
+                }
+                catch {
+                    Log.Warning($"Unable to find a version for script {scriptId}");
+                     return null;
+                }
+            }
+            if(versionToPublish == -1) {
+                return null;
+            }
+            var script = await _dbContext.Script.Where(s => s.ScriptId == scriptId).FirstOrDefaultAsync();
+            script.PublishedVersion = versionToPublish;
+            await _dbContext.SaveChangesAsync();
+            return new VMScript(script);
+        }
+
+        public int GetLatestVersionID(int scriptId) {
+            return _dbContext.ScriptVersion
+                .Where(p => 
+                    p.ScriptId.Equals(scriptId) 
+                    && p.Script.PublishedVersion.Equals(p.ScriptVersionId)
+                )
+                .Select(v => v.ScriptVersionId)
+                .First();
+        }
     }
+    
 }

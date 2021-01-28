@@ -15,5 +15,7 @@ namespace EphIt.BL.Script
         Task Delete(int scriptId);
         Task<List<VMScriptVersion>> GetVersionAsync(int scriptId, bool IncldueAll);
         Task<int> NewVersionAsync(int scriptId, string scriptBody, short scriptLanguageId);
+        Task<VMScript> PublishVersionAsync(int scriptId, int? scriptVersionID);
+        int GetLatestVersionID(int scriptId);
     }
 }
