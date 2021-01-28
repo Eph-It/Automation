@@ -15,7 +15,8 @@ namespace EphIt.BL.Automation
         
         void SetPort(int port);
         int GetPort();
-        string PostWebCall(string url, object body);
+        string PostWebCall(string url, object body = null);
+        T PostWebCall<T>(string url, object body = null);
         string GetWebCall(string url);
         T GetWebCall<T>(string url);
     }
