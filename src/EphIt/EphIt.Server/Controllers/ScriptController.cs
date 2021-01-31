@@ -3,7 +3,6 @@ using EphIt.BL.Automation;
 using EphIt.BL.Script;
 using EphIt.BL.User;
 using EphIt.Db.Models;
-using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -38,13 +37,6 @@ namespace EphIt.Server.Controllers
             }
 
             return item;
-        }
-        [HttpGet]
-        [EnableQuery]
-        [Route("odata/[controller]")]
-        public IEnumerable<Script> Get()
-        {
-            return _dbContext.Script;
         }
         [HttpGet]
         [Route("/api/[controller]")]

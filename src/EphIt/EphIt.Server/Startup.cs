@@ -20,6 +20,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OMyEF;
 
 namespace EphIt.Blazor.Server
 {
@@ -53,7 +54,7 @@ namespace EphIt.Blazor.Server
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
             services.AddRazorPages();
-            services.AddOData();
+            services.AddOMyEF();
             services.AddDbContext<EphItContext>(
                     options => 
                         options.UseSqlServer(Configuration.GetConnectionString("EphItDb"))
@@ -118,16 +119,8 @@ namespace EphIt.Blazor.Server
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
-                endpoints.Select().Filter().OrderBy().Count().MaxTop(10);
-                endpoints.MapODataRoute("odata", "odata", GetEdmModel());
+                endpoints.AddOMyEFRoute<EphItContext>();
             });
-        }
-        private IEdmModel GetEdmModel()
-        {
-            var odataBuilder = new ODataConventionModelBuilder();
-            odataBuilder.EntitySet<Script>("Script");
-            odataBuilder.EntitySet<Job>("Job");
-            return odataBuilder.GetEdmModel();
         }
         public void ConfigureDb(IEphItUser user, EphItContext _context)
         {

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using OMyEF.Db;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EphIt.Db.Models
 {
+    [GenerateODataController(Authorize = true, SetName = "Jobs")]
     public class Job
     {
         public Job()
