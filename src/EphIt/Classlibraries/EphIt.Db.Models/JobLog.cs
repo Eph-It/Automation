@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,14 +16,5 @@ namespace EphIt.Db.Models
 
         public virtual Job JobU { get; set; }
     }
-    public class JobLogConfiguration : IEntityTypeConfiguration<JobLog>
-    {
-        public void Configure(EntityTypeBuilder<JobLog> builder)
-        {
-            builder.HasOne(p => p.JobU)
-                .WithMany(m => m.JobLog)
-                .HasForeignKey(key => key.JobUid)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
+    
 }
