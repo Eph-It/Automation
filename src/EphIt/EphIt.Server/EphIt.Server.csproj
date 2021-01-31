@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp5.0</TargetFramework>
     <UserSecretsId>3f3f165c-a413-4288-a7ac-afabb9a2ab89</UserSecretsId>
+	  <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
