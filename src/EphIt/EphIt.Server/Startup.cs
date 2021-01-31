@@ -49,7 +49,9 @@ namespace EphIt.Blazor.Server
             AppDomain.CurrentDomain.ProcessExit += (s, e) => Log.CloseAndFlush();
             services.AddSingleton(Log.Logger);
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
             services.AddRazorPages();
             services.AddOData();
             services.AddDbContext<EphItContext>(

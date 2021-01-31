@@ -14,6 +14,8 @@ using EphIt.BL.Automation;
 using System.Security.Policy;
 using Microsoft.Extensions.Configuration;
 using EphIt.Db.Enums;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EphIt.Service.Posh.Job
 {
@@ -188,6 +190,13 @@ namespace EphIt.Service.Posh.Job
             int port = automationHelper.GetPort();
             string modulePath = automationHelper.GetAutomationModulePath();
             
+            if(!System.IO.File.Exists(modulePath) && !System.IO.Directory.Exists(modulePath))
+            {
+                //load something fromthe database?
+                Log.Logger.Error("Automation Module not found.");
+
+            }
+            //check / verify hash value someday TODO
             string defaultPortCommand = "$PSDefaultParameterValues=@{\"Get-AutomationVariable:AutomationServerPort\"=" + port.ToString() + "};";
             string defaultServerCommand = "$PSDefaultParameterValues.Add(\"Get-AutomationVariable:AutomationServerName\", \"" + url + "\");";
             string importModuleCommand = $"Import-Module \"{modulePath}\";";
@@ -235,8 +244,12 @@ namespace EphIt.Service.Posh.Job
         public void RecordOutput(PoshJob poshJob, object sender, DataAddedEventArgs e)
         {
             var record = ((PSDataCollection<PSDataCollection<PSObject>>)sender)[e.Index];
-            //work needed here, send to server 
-            //TODO
+            JobOutputPostParameters jopp = new JobOutputPostParameters();
+            jopp.JobUid = poshJob.JobUID;
+            jopp.Type = record[0].TypeNames[0];
+            jopp.JsonValue = JsonSerializer.Serialize(record[0].BaseObject);
+            string url = automationHelper.GetUrl() + $"/api/Job/{poshJob.JobUID}/Output";
+            automationHelper.PostWebCall(url, jopp);
             Log.Information($"{poshJob.JobUID} Output: Type - {record[0].TypeNames[0]} Value - {record[0].BaseObject}");
         }
 

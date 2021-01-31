@@ -1,10 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace EphIt.Db.Models
 {
@@ -21,13 +17,5 @@ namespace EphIt.Db.Models
         [ForeignKey("JobUid")]
         public virtual Job Job { get; set; }
     }
-    public class JobQueueConfiguration : IEntityTypeConfiguration<JobQueue>
-    {
-        public void Configure(EntityTypeBuilder<JobQueue> builder)
-        {
-            builder.HasOne(p => p.Job)
-                .WithOne(d => d.JobQueue)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
+    
 }
