@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnterpriseAutomation", "Pow
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Automation", "PowerShell\Automation\Automation.csproj", "{08E18086-275C-4214-A06D-0FF2F1A0803E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EphIt.UI", "Classlibraries\EphIt.UI\EphIt.UI.csproj", "{647BC2A7-3637-4EE3-BF3E-C002A63D9F59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.UI", "Classlibraries\EphIt.UI\EphIt.UI.csproj", "{647BC2A7-3637-4EE3-BF3E-C002A63D9F59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

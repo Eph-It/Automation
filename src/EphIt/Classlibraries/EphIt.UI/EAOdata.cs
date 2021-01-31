@@ -16,12 +16,15 @@ namespace EphIt.UI
         {
             BuildHttpClient(baseUri);
         }
+        public EAOdata(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
         private void BuildHttpClient(string baseUri)
         {
             HttpClient httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true });
             httpClient.BaseAddress = new Uri(baseUri);
             _httpClient = httpClient;
-            
         }
         public ODataClient GetClient()
         {

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using OMyEF.Db;
 
 namespace EphIt.Db.Models
 {
+    [GenerateODataController]
     public class Role
     {
         public Role()

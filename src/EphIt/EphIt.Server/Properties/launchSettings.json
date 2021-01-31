@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:60904/api/script",
+      "launchUrl": "http://localhost:60904/odata/Authentication",
       "environmentVariables": {
         "ASPNETCORE_DROPDB": "False",
         "ASPNETCORE_ENVIRONMENT": "Development"

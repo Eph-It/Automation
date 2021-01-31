@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OData.Edm;
+using OMyEF;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -73,6 +74,7 @@ namespace EphIt.Blazor.Server
                     }
                 }
             });
+            
             services.AddTransient<IAuthorizationHandler, EphItAuthRequirementHandler>();
         }
 
@@ -112,11 +114,11 @@ namespace EphIt.Blazor.Server
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
+                
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
-                endpoints.Select().Filter().OrderBy().Count().MaxTop(10);
-                endpoints.MapODataRoute("odata", "odata", GetEdmModel());
+                endpoints.AddOMyEFRoute<EphItContext>();
             });
         }
         private IEdmModel GetEdmModel()
@@ -125,6 +127,7 @@ namespace EphIt.Blazor.Server
             odataBuilder.EntitySet<Script>("Script");
             odataBuilder.EntitySet<Job>("Job");
             odataBuilder.EntitySet<ScriptVersion>("ScriptVersion");
+            odataBuilder.EntitySet<Authentication>("Authentication");
             return odataBuilder.GetEdmModel();
         }
         public void ConfigureDb(IEphItUser user, EphItContext _context)

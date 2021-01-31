@@ -2,8 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
+using OMyEF.Db;
+
 namespace EphIt.Db.Models
 {
+    
     public partial class EphItContext : DbContext
     {
         public EphItContext()
@@ -14,7 +17,6 @@ namespace EphIt.Db.Models
             : base(options)
         {
         }
-
         public virtual DbSet<Authentication> Authentication { get; set; }
         public virtual DbSet<Job> Job { get; set; }
         public virtual DbSet<JobLog> JobLog { get; set; }

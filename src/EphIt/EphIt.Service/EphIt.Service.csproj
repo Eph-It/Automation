@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
     <UserSecretsId>dotnet-EphIt.Service-74A856F2-EFB7-4077-833E-9A1258D65B22</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>

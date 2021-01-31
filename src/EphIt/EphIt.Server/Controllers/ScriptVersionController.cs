@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using EphIt.BL.User;
 using EphIt.Db.Models;
@@ -99,6 +100,68 @@ namespace EphIt.Server.Controllers
             _dbContext.ScriptVersion.Add(scriptVersion);
             await _dbContext.SaveChangesAsync();
             return Ok(scriptVersion);
+        }
+        /*
+         * Commenting these out because I wrote them and someday we might want them
+         * Current ScriptVersions are version controled so editing them creates a new DbEntry
+         * So these patch / put actions don't make much sense.
+        [HttpPatch]
+        [Route("odata/[controller]")]
+        [Authorize("ScriptsModify")]
+        public async Task<IActionResult> Patch([FromODataUri] int scriptVersionId, Delta<ScriptVersion> scriptVersion)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var entity = await _dbContext.ScriptVersion.FindAsync(scriptVersionId);
+
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            scriptVersion.Patch(entity);
+
+            await _dbContext.SaveChangesAsync();
+            return Ok(entity);
+        }
+        [HttpPut]
+        [Route("odata/[controller]")]
+        [Authorize("ScriptsModify")]
+        public async Task<IActionResult> Put([FromODataUri] int scriptVersionId, ScriptVersion scriptVersion)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (scriptVersionId != scriptVersion.ScriptVersionId)
+            {
+                return BadRequest();
+            }
+            _dbContext.Entry(scriptVersion).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+            return Ok(scriptVersion);
+        }
+        */
+        [HttpDelete]
+        [Route("odata/[controller]")]
+        [Authorize("ScriptsModify")]
+        public async Task<IActionResult> Delete([FromODataUri] int key)
+        {
+            var scriptVersion = await _dbContext.ScriptVersion.FindAsync(key);
+            if (scriptVersion == null)
+            {
+                return NotFound();
+            }
+            scriptVersion.IsDeleted = true;
+
+            var script = await _dbContext.Script.FindAsync(scriptVersion.ScriptId);
+            script.Modified = DateTime.UtcNow;
+            script.ModifiedByUserId = _ephItUser.RegisterCurrent().UserId;
+
+            await _dbContext.SaveChangesAsync();
+            return StatusCode((int)HttpStatusCode.NoContent);
         }
         [HttpPost]
         [Route("Script/{scriptId}/Version")]
