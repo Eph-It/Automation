@@ -14,6 +14,8 @@ using EphIt.BL.Automation;
 using System.Security.Policy;
 using Microsoft.Extensions.Configuration;
 using EphIt.Db.Enums;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EphIt.Service.Posh.Job
 {
@@ -242,8 +244,12 @@ namespace EphIt.Service.Posh.Job
         public void RecordOutput(PoshJob poshJob, object sender, DataAddedEventArgs e)
         {
             var record = ((PSDataCollection<PSDataCollection<PSObject>>)sender)[e.Index];
-            //work needed here, send to server 
-            //TODO
+            JobOutputPostParameters jopp = new JobOutputPostParameters();
+            jopp.JobUid = poshJob.JobUID;
+            jopp.Type = record[0].TypeNames[0];
+            jopp.JsonValue = JsonSerializer.Serialize(record[0].BaseObject);
+            string url = automationHelper.GetUrl() + $"/api/Job/{poshJob.JobUID}/Output";
+            automationHelper.PostWebCall(url, jopp);
             Log.Information($"{poshJob.JobUID} Output: Type - {record[0].TypeNames[0]} Value - {record[0].BaseObject}");
         }
 

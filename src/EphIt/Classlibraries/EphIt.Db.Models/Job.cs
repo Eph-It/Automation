@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,7 +11,7 @@ namespace EphIt.Db.Models
         {
             JobLog = new HashSet<JobLog>();
             JobOutput = new HashSet<JobOutput>();
-            JobObjectIds = new HashSet<VRBACJobToObjectId>();
+            //JobObjectIds = new HashSet<VRBACJobToObjectId>();
         }
 
         [Key]
@@ -35,25 +33,7 @@ namespace EphIt.Db.Models
         public virtual JobQueue JobQueue { get; set; }
         public virtual JobParameters JobParameters { get; set; }
         public virtual ICollection<JobOutput> JobOutput { get; set; }
-        public virtual ICollection<VRBACJobToObjectId> JobObjectIds { get; set; }
+        //public virtual ICollection<VRBACJobToObjectId> JobObjectIds { get; set; }
     }
-    public class JobConfiguration : IEntityTypeConfiguration<Job>
-    {
-        public void Configure(EntityTypeBuilder<Job> builder)
-        {
-            builder.HasOne(d => d.CreatedByUser)
-                .WithMany(many => many.Job)
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(d => d.JobStatus)
-                .WithMany(p => p.Job)
-                .HasForeignKey(key => key.JobStatusId)
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(d => d.ScriptVersion)
-                .WithMany(p => p.Jobs)
-                .HasForeignKey(key => key.ScriptVersionId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasQueryFilter(filter => filter.JobObjectIds.Count > 0);
-        }
-    }
+    
 }

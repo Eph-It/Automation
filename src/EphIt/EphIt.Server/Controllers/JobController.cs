@@ -84,7 +84,7 @@ namespace EphIt.Server.Controllers
         [HttpPost]
         [Route("/api/[controller]/{jobID}/Output")]
         [Authorize("JobsExecute")]
-        public async Task<ActionResult<Guid>> NewOutputAsync(JobOutputPostParameters jobOutputPostParameters)
+        public async Task<ActionResult<Guid>> NewOutputAsync([FromBody] JobOutputPostParameters jobOutputPostParameters)
         {
             JobOutput output = new JobOutput();
             output.ByteArrayValue = jobOutputPostParameters.ByteArrayValue;
@@ -94,6 +94,7 @@ namespace EphIt.Server.Controllers
             output.JobOutputId = Guid.NewGuid();
             output.Type = jobOutputPostParameters.Type;
             await _dbContext.JobOutput.AddAsync(output);
+            await _dbContext.SaveChangesAsync();
             return output.JobOutputId;
         }
     }
