@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Service", "EphIt.Serv
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Classlibraries", "Classlibraries", "{33612611-DEB3-4683-8F22-405F063A1284}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Db.Models", "Classlibraries\EphIt.Db.Models\EphIt.Db.Models.csproj", "{A9557B25-29EC-43AF-9E44-59C90E339505}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.Models", "Classlibraries\EphIt.Db.Models\EphIt.Models.csproj", "{A9557B25-29EC-43AF-9E44-59C90E339505}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EphIt.BL", "Classlibraries\EphIt.BL\EphIt.BL.csproj", "{71497FBF-A395-4A43-853D-31BFE6F6CCFB}"
 EndProject

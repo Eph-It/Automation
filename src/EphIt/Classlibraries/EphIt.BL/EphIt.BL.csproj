@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EphIt.Db.Models\EphIt.Db.Models.csproj" />
+    <ProjectReference Include="..\EphIt.Db.Models\EphIt.Models.csproj" />
     <ProjectReference Include="..\EphIt.Db\EphIt.Db.csproj" />
   </ItemGroup>
 

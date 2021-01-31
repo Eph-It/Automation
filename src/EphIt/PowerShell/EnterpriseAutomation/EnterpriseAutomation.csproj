@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Classlibraries\EphIt.BL\EphIt.BL.csproj" />
-    <ProjectReference Include="..\..\Classlibraries\EphIt.Db.Models\EphIt.Db.Models.csproj" />
+    <ProjectReference Include="..\..\Classlibraries\EphIt.Db.Models\EphIt.Models.csproj" />
   </ItemGroup>
 
 </Project>
