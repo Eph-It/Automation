@@ -347,4 +347,70 @@ namespace EphIt.Db.Models
             builder.HasKey(d => d.VariableId);
         }
     }
+    public class VRBACJobToObjectIdConfiguration : IEntityTypeConfiguration<VRBACJobToObjectId>
+    {
+        private EphItContext _context;
+        public VRBACJobToObjectIdConfiguration(EphItContext context)
+        {
+            _context = context;
+        }
+        public void Configure(EntityTypeBuilder<VRBACJobToObjectId> builder)
+        {
+            builder.HasKey("JobUid", "RoleId", "UserGroupId");
+            builder.ToView("v_RBACJobToObjectId");
+            /*builder.HasOne(p => p.Job)
+                .WithMany(many => many.JobObjectIds)
+                .HasForeignKey(key => key.JobUid)
+                .HasPrincipalKey(pkey => pkey.JobUid);*/
+            builder.HasQueryFilter(p => _context.GetUserObjectIds().Contains(p.ObjectId));
+        }
+    }
+    public class VRBACScriptConfiguration : IEntityTypeConfiguration<VRBACScript>
+    {
+        public void Configure(EntityTypeBuilder<VRBACScript> builder)
+        {
+            builder.ToView("v_RBACScript");
+            /*builder.HasOne(p => p.Script)
+                .WithMany(many => many.ScriptRoles)
+                .HasForeignKey(key => key.ScriptId)
+                .HasPrincipalKey(pkey => pkey.ScriptId);*/
+            builder.HasQueryFilter(filter => filter.RoleId == 555);
+        }
+    }
+    public class VRBACScriptToObjectIdConfiguration : IEntityTypeConfiguration<VRBACScriptToObjectId>
+    {
+        private EphItContext _context;
+        public VRBACScriptToObjectIdConfiguration(EphItContext context)
+        {
+            _context = context;
+        }
+        public void Configure(EntityTypeBuilder<VRBACScriptToObjectId> builder)
+        {
+            builder.HasKey("ScriptId", "RoleId", "UserGroupId");
+            builder.ToView("v_RBACScriptToObjectId");
+            /*builder.HasOne(p => p.Script)
+                .WithMany(many => many.ScriptObjectIds)
+                .HasForeignKey(key => key.ScriptId)
+                .HasPrincipalKey(pkey => pkey.ScriptId);*/
+            builder.HasQueryFilter(p => _context.GetUserObjectIds().Contains(p.ObjectId));
+        }
+    }
+    public class VRBACScriptVersionToObjectIdConfiguration : IEntityTypeConfiguration<VRBACScriptVersionToObjectId>
+    {
+        private EphItContext _context;
+        public VRBACScriptVersionToObjectIdConfiguration(EphItContext context)
+        {
+            _context = context;
+        }
+        public void Configure(EntityTypeBuilder<VRBACScriptVersionToObjectId> builder)
+        {
+            builder.HasKey("ScriptVersionId", "RoleId", "UserGroupId");
+            builder.ToView("v_RBACScriptVersionToObjectId");
+            /*builder.HasOne(p => p.ScriptVersion)
+                .WithMany(many => many.ScriptVersionObjectIds)
+                .HasForeignKey(key => key.ScriptVersionId)
+                .HasPrincipalKey(pkey => pkey.ScriptVersionId);*/
+            builder.HasQueryFilter(p => _context.GetUserObjectIds().Contains(p.ObjectId));
+        }
+    }
 }
