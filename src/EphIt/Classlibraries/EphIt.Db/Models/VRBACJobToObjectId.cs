@@ -28,10 +28,10 @@ namespace EphIt.Db.Models
         {
             builder.HasKey("JobUid", "RoleId", "UserGroupId");
             builder.ToView("v_RBACJobToObjectId");
-            builder.HasOne(p => p.Job)
+            /*builder.HasOne(p => p.Job)
                 .WithMany(many => many.JobObjectIds)
                 .HasForeignKey(key => key.JobUid)
-                .HasPrincipalKey(pkey => pkey.JobUid);
+                .HasPrincipalKey(pkey => pkey.JobUid);*/
             builder.HasQueryFilter(p => _context.GetUserObjectIds().Contains(p.ObjectId));
         }
     }

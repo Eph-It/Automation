@@ -21,10 +21,10 @@ namespace EphIt.Db.Models
         public void Configure(EntityTypeBuilder<VRBACScript> builder)
         {
             builder.ToView("v_RBACScript");
-            builder.HasOne(p => p.Script)
+            /*builder.HasOne(p => p.Script)
                 .WithMany(many => many.ScriptRoles)
                 .HasForeignKey(key => key.ScriptId)
-                .HasPrincipalKey(pkey => pkey.ScriptId);
+                .HasPrincipalKey(pkey => pkey.ScriptId);*/
             builder.HasQueryFilter(filter => filter.RoleId == 555);
         }
     }

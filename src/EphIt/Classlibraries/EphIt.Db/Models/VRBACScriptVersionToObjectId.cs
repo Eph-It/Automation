@@ -27,10 +27,10 @@ namespace EphIt.Db.Models
         {
             builder.HasKey("ScriptVersionId", "RoleId", "UserGroupId");
             builder.ToView("v_RBACScriptVersionToObjectId");
-            builder.HasOne(p => p.ScriptVersion)
+            /*builder.HasOne(p => p.ScriptVersion)
                 .WithMany(many => many.ScriptVersionObjectIds)
                 .HasForeignKey(key => key.ScriptVersionId)
-                .HasPrincipalKey(pkey => pkey.ScriptVersionId);
+                .HasPrincipalKey(pkey => pkey.ScriptVersionId);*/
             builder.HasQueryFilter(p => _context.GetUserObjectIds().Contains(p.ObjectId));
         }
     }
