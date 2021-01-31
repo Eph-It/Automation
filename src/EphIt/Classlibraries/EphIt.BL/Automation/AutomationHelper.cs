@@ -1,5 +1,4 @@
-﻿using EphIt.Db.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -65,17 +64,19 @@ namespace EphIt.BL.Automation
         {
             return Port;
         }
-        public string PostWebCall(string url, object body)
+        public string PostWebCall(string url, object body = null)
         {
             WebRequest request = WebRequest.Create(url);
             request.Method = "POST";
 
             request.Credentials = CredentialCache.DefaultCredentials;
             request.ContentType = "application/json";
-            Stream requestStream = request.GetRequestStream();
-            var postJson = JsonConvert.SerializeObject(body);
-            var bytes = Encoding.ASCII.GetBytes(postJson);
-            requestStream.Write(bytes, 0, bytes.Length);
+            if(body != null) {
+                Stream requestStream = request.GetRequestStream();
+                var postJson = JsonConvert.SerializeObject(body);
+                var bytes = Encoding.ASCII.GetBytes(postJson);
+                requestStream.Write(bytes, 0, bytes.Length);
+            }
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream dataStream = response.GetResponseStream();
             StreamReader reader = new StreamReader(dataStream);
@@ -103,6 +104,11 @@ namespace EphIt.BL.Automation
         public T GetWebCall<T>(string url)
         {
             string response = GetWebCall(url);
+            return JsonConvert.DeserializeObject<T>(response);
+        }
+        public T PostWebCall<T>(string url, object body = null)
+        {
+            string response = PostWebCall(url, body);
             return JsonConvert.DeserializeObject<T>(response);
         }
     }
