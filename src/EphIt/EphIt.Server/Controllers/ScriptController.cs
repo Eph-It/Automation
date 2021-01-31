@@ -87,5 +87,11 @@ namespace EphIt.Server.Controllers
         {
             return await _scriptManager.NewVersionAsync(scriptId, postParams.ScriptBody, postParams.ScriptLanguageId);
         }
+        [HttpPost]
+        [Route("/api/[controller]/{scriptId}/Publish/{scriptVersionID?}")]
+        public async Task<VMScript> Publish(int scriptId, int? scriptVersionID = null) 
+        {
+            return await _scriptManager.PublishVersionAsync(scriptId, scriptVersionID);
+        }
     }
 }
