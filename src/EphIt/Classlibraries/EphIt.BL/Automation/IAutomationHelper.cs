@@ -10,6 +10,9 @@ namespace EphIt.BL.Automation
         void SetServer(string name);
         string GetServer();
         string GetAutomationModulePath();
+        int GetGetQueuedJobDelay();
+        void SetGetQueuedJobDelay(int value);
+        
         void SetPort(int port);
         int GetPort();
         string PostWebCall(string url, object body);

@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Authentication;
+using System.Security.Claims;
+using System.Security.Principal;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -6,13 +11,59 @@ namespace EphIt.Db.Models
 {
     public partial class EphItContext : DbContext
     {
+        private IHttpContextAccessor _httpContext;
+        private HashSet<string> _userObjectIds;
         public EphItContext()
         {
         }
 
-        public EphItContext(DbContextOptions<EphItContext> options)
+        public EphItContext(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContext = httpContextAccessor;
+        }
+
+        public EphItContext(DbContextOptions<EphItContext> options, IHttpContextAccessor httpContextAccessor)
             : base(options)
         {
+            _httpContext = httpContextAccessor;
+        }
+
+        public HashSet<string> GetUserObjectIds()
+        {
+            _userObjectIds = new HashSet<string>();
+            if (_httpContext.HttpContext == null)
+            {
+                return _userObjectIds;
+            }
+            if (!_httpContext.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return _userObjectIds;
+            }
+            if (_httpContext.HttpContext.User.Identity is WindowsIdentity)
+            {
+                var user = (WindowsIdentity)_httpContext.HttpContext.User.Identity;
+                _userObjectIds.Add(user.User.ToString());
+                foreach (var g in user.Groups)
+                {
+                    _userObjectIds.Add(g.Value);
+                }
+            }
+            else if (_httpContext.HttpContext.User.Identity.AuthenticationType == "AuthenticationTypes.Federation")
+            {
+                var ci = (ClaimsIdentity)_httpContext.HttpContext.User.Identity;
+                foreach (var c in ci.Claims)
+                {
+                    if (c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier")
+                    {
+                        _userObjectIds.Add(c.Value);
+                    }
+                    else if (c.Type == "groups")
+                    {
+                        _userObjectIds.Add(c.Value);
+                    }
+                }
+            }
+            return _userObjectIds;
         }
 
         public virtual DbSet<Authentication> Authentication { get; set; }
@@ -39,6 +90,10 @@ namespace EphIt.Db.Models
         public virtual DbSet<GroupActiveDirectory> GroupActiveDirectory { get; set; }
         public virtual DbSet<GroupAzureActiveDirectory> GroupAzureActiveDirectory { get; set; }
         public virtual DbSet<JobOutput> JobOutput { get; set; }
+        public virtual DbSet<VRBACScript> VRBACScript { get; set; }
+        public virtual DbSet<VRBACScriptToObjectId> VRBACScriptToObjectId { get; set; }
+        public virtual DbSet<VRBACJobToObjectId> VRBACJobToObjectId { get; set; }
+        public virtual DbSet<VRBACScriptVersionToObjectId> VRBACScriptVersionToObjectId { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -76,6 +131,10 @@ namespace EphIt.Db.Models
             modelBuilder.ApplyConfiguration(new GroupActiveDirectoryConfiguration());
             modelBuilder.ApplyConfiguration(new GroupAzureActiveDirectoryConfiguration());
             modelBuilder.ApplyConfiguration(new JobOutputConfiguration());
+            modelBuilder.ApplyConfiguration(new VRBACScriptConfiguration());
+            modelBuilder.ApplyConfiguration(new VRBACScriptToObjectIdConfiguration(this));
+            modelBuilder.ApplyConfiguration(new VRBACJobToObjectIdConfiguration(this));
+            modelBuilder.ApplyConfiguration(new VRBACScriptVersionToObjectIdConfiguration(this));
         }
 
     }

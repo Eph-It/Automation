@@ -9,6 +9,6 @@ INSERT INTO [AUDIT] ( RbacActionId, RbacObjectId, Created, UserId, ObjectId )
 		,2 AS 'RbacObjectId'
 		,GETUTCDATE() AS Created
 		,INSERTED.CreatedByUserId AS UserId
-		,INSERTED.RoleIdId AS ObjectId
+		,INSERTED.RoleId AS ObjectId
 	FROM INSERTED
 END

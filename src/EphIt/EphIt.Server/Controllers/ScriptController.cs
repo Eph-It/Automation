@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EphIt.BL.Authorization;
+﻿using EphIt.BL.Authorization;
+using EphIt.BL.Automation;
 using EphIt.BL.Script;
 using EphIt.BL.User;
 using EphIt.Db.Models;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EphIt.Server.Controllers
 {
@@ -89,16 +87,5 @@ namespace EphIt.Server.Controllers
         {
             return await _scriptManager.NewVersionAsync(scriptId, postParams.ScriptBody, postParams.ScriptLanguageId);
         }
-    }
-    public class ScriptPostParameters
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public int? Published_Version { get; set; }
-    }
-    public class ScriptVersionPostParameters
-    {
-        public string ScriptBody { get; set; }
-        public short ScriptLanguageId { get; set; }
     }
 }
