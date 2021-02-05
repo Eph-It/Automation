@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
     <AssemblyName>EnterpriseAutomation</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="System.Management.Automation" Version="7.0.3" />
+    <PackageReference Include="System.Management.Automation" Version="7.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Classlibraries\EphIt.BL\EphIt.BL.csproj" />
-    <ProjectReference Include="..\..\Classlibraries\EphIt.Db.Models\EphIt.Db.Models.csproj" />
+    <ProjectReference Include="..\..\Classlibraries\EphIt.Db.Models\EphIt.Models.csproj" />
   </ItemGroup>
 
 </Project>
