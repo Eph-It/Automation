@@ -16,6 +16,4 @@ namespace EphIt.Db.Models
         public DateTime Modified { get; set; }
         public int ModifiedByUserId { get; set; }
     }
-    
-
 }

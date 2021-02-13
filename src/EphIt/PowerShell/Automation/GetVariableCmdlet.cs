@@ -58,7 +58,7 @@ namespace Automation
         protected override void ProcessRecord()
         {
             string url = automationHelper.GetUrl() + $"/api/Variable/{Name}";
-            Variable response = automationHelper.GetWebCall<Variable>(url);
+            VMVariable response = automationHelper.GetWebCall<VMVariable>(url);
             if (response != null)
             {
                 WriteObject(response.Value);

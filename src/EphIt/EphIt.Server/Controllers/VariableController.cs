@@ -25,7 +25,7 @@ namespace EphIt.Server.Controllers
         [HttpPost]
         [Route("/api/Variable/")]
         [Authorize("ScriptsModify")]
-        public Variable New(string name, string value)
+        public VMVariable New(string name, string value)
         {
             var userId = _ephItUser.Register().UserId;
 
@@ -50,17 +50,17 @@ namespace EphIt.Server.Controllers
 
             }
             _dbContext.SaveChanges();
-            return variable;
+            return new VMVariable(variable);
         }
 
         [HttpGet]
         [Route("/api/Variable/{name}")]
         [Authorize("ScriptsRead")]
-        public Variable Get(string name)
+        public VMVariable Get(string name)
         {
-            return _dbContext.Variable
+            return new VMVariable(_dbContext.Variable
                 .Where(v => v.Name.Equals(name))
-                .FirstOrDefault();
+                .FirstOrDefault());
         }
     }
 }
