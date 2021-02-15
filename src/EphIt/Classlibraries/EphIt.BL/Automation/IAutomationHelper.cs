@@ -11,8 +11,9 @@ namespace EphIt.BL.Automation
         string GetServer();
         string GetAutomationModulePath();
         int GetGetQueuedJobDelay();
+        string GetTempDirectory();        
         void SetGetQueuedJobDelay(int value);
-        
+        void SetTempDirectory(string value);
         void SetPort(int port);
         int GetPort();
         string PostWebCall(string url, object body = null);

@@ -347,6 +347,12 @@ namespace EphIt.Db.Models
             builder.HasKey(d => d.VariableId);
         }
     }
+    public class ModuleConfiguration : IEntityTypeConfiguration<Module>
+    {
+        public void Configure(EntityTypeBuilder<Module> builder) {
+            builder.HasKey(d => d.ModuleId);
+        }
+    }
     public class VRBACJobToObjectIdConfiguration : IEntityTypeConfiguration<VRBACJobToObjectId>
     {
         private EphItContext _context;
