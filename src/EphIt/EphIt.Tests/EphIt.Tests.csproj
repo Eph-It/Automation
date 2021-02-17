@@ -18,8 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Classlibraries\EphIt.BL\EphIt.BL.csproj" />
+    <ProjectReference Include="..\Classlibraries\EphIt.PowerShell\EphIt.PowerShell.csproj" />
     <ProjectReference Include="..\EphIt.Service\EphIt.Service.csproj" />
+    <ProjectReference Include="..\PowerShell\Automation\Automation.csproj" />
   </ItemGroup>
 
 </Project>
