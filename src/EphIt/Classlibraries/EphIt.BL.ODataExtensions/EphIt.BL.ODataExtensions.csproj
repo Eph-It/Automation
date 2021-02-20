@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OMyEF.Server" Version="0.2.69" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EphIt.BL\EphIt.BL.csproj" />
+    <ProjectReference Include="..\EphIt.Db.Models\EphIt.Models.csproj" />
+    <ProjectReference Include="..\EphIt.Db\EphIt.Db.csproj" />
+  </ItemGroup>
+
+</Project>

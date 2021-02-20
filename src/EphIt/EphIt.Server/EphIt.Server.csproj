@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Classlibraries\EphIt.BL.ODataExtensions\EphIt.BL.ODataExtensions.csproj" />
     <ProjectReference Include="..\Classlibraries\EphIt.BL\EphIt.BL.csproj" />
     <ProjectReference Include="..\EphIt.Blazor\EphIt.Blazor.csproj" />
     <ProjectReference Include="..\Classlibraries\EphIt.Db\EphIt.Db.csproj" />

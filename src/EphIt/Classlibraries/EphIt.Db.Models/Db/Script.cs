@@ -34,8 +34,8 @@ namespace EphIt.Db.Models
         public virtual User ModifiedByUser { get; set; }
         public virtual ICollection<RoleObjectScopeScript> RoleObjectScopeScript { get; set; }
         public virtual ICollection<ScriptVersion> ScriptVersion { get; set; }
-        //public virtual ICollection<VRBACScript> ScriptRoles { get; set; }
-        //public virtual ICollection<VRBACScriptToObjectId> ScriptObjectIds { get; set; }
+        public virtual ICollection<VRBACScript> ScriptRoles { get; set; }
+        public virtual ICollection<VRBACScriptToObjectId> ScriptObjectIds { get; set; }
     }
     
 }

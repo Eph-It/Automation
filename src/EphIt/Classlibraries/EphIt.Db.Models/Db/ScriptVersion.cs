@@ -1,9 +1,11 @@
-﻿using System;
+﻿using OMyEF.Db;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace EphIt.Db.Models
 {
+    [GenerateODataController(Authorize = true, SetName = "ScriptVersions")]
     public class ScriptVersion
     {
         public ScriptVersion()
@@ -24,6 +26,7 @@ namespace EphIt.Db.Models
         public virtual Script Script { get; set; }
         public virtual ScriptLanguage ScriptLanguage { get; set; }
         public virtual ICollection<Job> Jobs { get; set; }
+        public virtual ICollection<VRBACScriptVersionToObjectId> ScriptVersionObjectIds { get; set; }
     }
     
 }
