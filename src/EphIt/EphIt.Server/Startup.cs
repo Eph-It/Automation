@@ -4,8 +4,6 @@ using EphIt.BL.JobManager;
 using EphIt.BL.Script;
 using EphIt.BL.User;
 using EphIt.Db.Models;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -15,12 +13,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
-using Microsoft.OData.Edm;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using OMyEF;
+using Microsoft.AspNetCore.Authentication.Negotiate;
 
 namespace EphIt.Blazor.Server
 {
@@ -45,6 +43,10 @@ namespace EphIt.Blazor.Server
                 {
                     services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                         .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAdApp"));
+                }
+                if(configSection["UseKestrel"] == "true")
+                {
+                    services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
                 }
             }
             AppDomain.CurrentDomain.ProcessExit += (s, e) => Log.CloseAndFlush();
@@ -113,7 +115,7 @@ namespace EphIt.Blazor.Server
 
             app.UseRouting();
             app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseAuthorization(); 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

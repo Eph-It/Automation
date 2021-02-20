@@ -1,16 +1,16 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EphIt.Db.Models
 {
-    public class Variable
+    public class Module
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int VariableId { get; set; }
+        public int ModuleId { get; set; }
         public string Name { get; set; }
-        public string Value { get; set; }
+        public byte[] Data { get; set; }
         public DateTime Created { get; set; }
         public int CreatedByUserId { get; set; }
         public DateTime Modified { get; set; }

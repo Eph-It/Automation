@@ -86,6 +86,7 @@ namespace EphIt.Db.Models
         public virtual DbSet<UserAzureActiveDirectory> UserAzureActiveDirectory { get; set; }
         public virtual DbSet<Audit> Audit { get; set; }
         public virtual DbSet<Variable> Variable { get; set; }
+        public virtual DbSet<Module> Module {get; set;}
         public virtual DbSet<Group> Group { get; set; }
         public virtual DbSet<GroupActiveDirectory> GroupActiveDirectory { get; set; }
         public virtual DbSet<GroupAzureActiveDirectory> GroupAzureActiveDirectory { get; set; }
@@ -127,6 +128,7 @@ namespace EphIt.Db.Models
             modelBuilder.ApplyConfiguration(new UserAzureActiveDirectoryConfiguration());
             modelBuilder.ApplyConfiguration(new AuditConfiguration());
             modelBuilder.ApplyConfiguration(new VariableConfiguration());
+            modelBuilder.ApplyConfiguration(new ModuleConfiguration());
             modelBuilder.ApplyConfiguration(new GroupConfiguration());
             modelBuilder.ApplyConfiguration(new GroupActiveDirectoryConfiguration());
             modelBuilder.ApplyConfiguration(new GroupAzureActiveDirectoryConfiguration());
