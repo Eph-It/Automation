@@ -15,6 +15,7 @@ namespace EphIt.BL.Automation
         public int Port { get; set; }
         public string AutomationModulePath { get; set; }
         public int GetQueuedJobDelay { get; set; }
+        public string TempDirectory {get; set;}
         public AutomationHelper() { }
         public AutomationHelper(IConfiguration configuration)
         {
@@ -22,7 +23,7 @@ namespace EphIt.BL.Automation
             SetPort(Int32.Parse(configuration.GetSection("ServerInfo:Port").Value));
             SetAutomationModulePath(configuration.GetSection("ServerInfo:AutomationModulePath").Value);
             SetGetQueuedJobDelay(Int32.Parse(configuration.GetSection("ServerInfo:GetQueuedJobDelay").Value));
-            
+            SetTempDirectory(configuration.GetSection("ServerInfo:TempDirectory").Value);
         }
         public string GetUrl()
         {
@@ -44,6 +45,9 @@ namespace EphIt.BL.Automation
         {
             return GetQueuedJobDelay;
         }
+        public string GetTempDirectory() {
+            return TempDirectory;
+        }
         public void SetServer(string name)
         {
             Server = name;
@@ -59,6 +63,14 @@ namespace EphIt.BL.Automation
         public void SetGetQueuedJobDelay(int value)
         {
             GetQueuedJobDelay = value;
+        }
+        public void SetTempDirectory(string value = null) {
+            if(string.IsNullOrEmpty(value)) {
+                TempDirectory = System.Environment.GetEnvironmentVariable("TEMP");
+            }
+            else {
+                TempDirectory = value;
+            }
         }
         public int GetPort()
         {
