@@ -35,7 +35,15 @@ namespace EphIt.BL.Script
             {
                 query.Include(p => p.PublishedVersion);
             }
-            return await query.FirstOrDefaultAsync();
+            int newestVer = _dbContext.ScriptVersion
+                .Where(v => v.ScriptId == scriptId)
+                .OrderByDescending(v => v.ScriptVersionId)
+                .Select(v => v.ScriptVersionId)
+                .ToList()
+                .FirstOrDefault();
+            var script = await query.FirstOrDefaultAsync();
+            script.NewestVersion = newestVer;
+            return script;
         }
         public async Task<List<VMScript>> SafeSearchScriptsAsync(string name, bool includePublished = false)
         {

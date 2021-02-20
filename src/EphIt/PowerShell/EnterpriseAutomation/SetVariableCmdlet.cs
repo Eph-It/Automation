@@ -13,7 +13,7 @@ using EphIt.BL.Automation;
 namespace EnterpriseAutomation
 {
     [Cmdlet(VerbsCommon.Set, "EAVariable")]
-    [OutputType(typeof(VMScript))]
+    [OutputType(typeof(VMVariable))]
     public class SetVariableCmdlet : PSCmdlet, IDynamicParameters
     {
         private static RuntimeDefinedParameterDictionary _staticStorage;
@@ -62,8 +62,8 @@ namespace EnterpriseAutomation
             
             //create new or update
             url = url + $"?name={Name}&value={Value}";
-            var result = automationHelper.PostWebCall(url, null);
-            WriteObject(JsonConvert.DeserializeObject<Variable>(result));
+            var result = automationHelper.PostWebCall<VMVariable>(url, null);
+            WriteObject(result);
             base.ProcessRecord();
         }
         protected override void EndProcessing()
