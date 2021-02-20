@@ -28,6 +28,7 @@ namespace EphIt.Db.Models
         public DateTime Modified { get; set; }
         public int ModifiedByUserId { get; set; }
         public int? PublishedVersion { get; set; }
+        public int? NewestVersion {get; set;}
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsDeleted { get; set; }

@@ -5,23 +5,54 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "EAModule",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "buildEAModule",
+            "program": "pwsh",
+            "args": [
+                    "-NoExit",
+                    "-NoProfile",
+                    "-Command",
+                    "Import-Module .\\bin\\Debug\\netcoreapp5.0\\EnterpriseAutomation.dll -Force -Verbose",
+                ],
+            "cwd": "${workspaceFolder}/src/EphIt/PowerShell/EnterpriseAutomation/",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Service",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/EphIt/EphIt.Service/bin/Debug/netcoreapp3.1/EphIt.Service.dll",
+            "program": "${workspaceFolder}/src/EphIt/EphIt.Service/bin/Debug/netcoreapp5.0/EphIt.Service.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/EphIt/EphIt.Service",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "env": {"ASPNETCORE_ENVIRONMENT": "Fred"}
         },
         {
-            "name": ".NET Core Attach",
+            "name": "Server",
             "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
+            "request": "launch",
+            "preLaunchTask": "buildServer",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/EphIt/EphIt.Server/bin/Debug/netcoreapp5.0/EphIt.Server.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/EphIt/EphIt.Server",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {"ASPNETCORE_ENVIRONMENT": "Fred"}   
         }
-    ]
+    ],
+    "compounds": [
+        {
+          "name": "Server/EAModule",
+          "configurations": ["Server", "EAModule"]
+        }
+      ]
 }
