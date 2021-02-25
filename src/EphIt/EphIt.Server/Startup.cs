@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Linq;
 using OMyEF;
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using EphIt.BL.ODataExtensions;
+using OMyEF.Server;
 
 namespace EphIt.Blazor.Server
 {
@@ -51,7 +53,7 @@ namespace EphIt.Blazor.Server
             }
             AppDomain.CurrentDomain.ProcessExit += (s, e) => Log.CloseAndFlush();
             services.AddSingleton(Log.Logger);
-
+            
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
@@ -67,6 +69,10 @@ namespace EphIt.Blazor.Server
             services.AddScoped<IScriptManager, ScriptManager>();
             services.AddScoped<IAuditLogger, AuditLogger>();
             services.AddScoped<IJobManager, JobManager>();
+
+            services.AddScoped<OMyEFControllerExtensions<EphIt.Db.Models.Script>, ODataScripts>();
+            services.AddScoped<OMyEFControllerExtensions<EphIt.Db.Models.ScriptVersion>, ODataScriptVersions>();
+
             services.AddAuthorization(options => 
             {
                 RBACObjectEnum[] objEnums = (RBACObjectEnum[]) Enum.GetValues(typeof(RBACObjectEnum));

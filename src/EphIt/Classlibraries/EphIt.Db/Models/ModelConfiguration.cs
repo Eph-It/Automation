@@ -265,6 +265,8 @@ namespace EphIt.Db.Models
                 .WithMany(p => p.ScriptModifiedByUser)
                 .HasForeignKey(d => d.ModifiedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasQueryFilter(p => p.ScriptObjectIds.Count > 0);
         }
     }
     public class ScriptLanguageConfiguration : IEntityTypeConfiguration<ScriptLanguage>
@@ -302,6 +304,8 @@ namespace EphIt.Db.Models
                 .WithMany(p => p.ScriptVersion)
                 .HasForeignKey(d => d.ScriptLanguageId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasQueryFilter(p => p.ScriptVersionObjectIds.Count > 0);
         }
     }
     public class UserConfiguration : IEntityTypeConfiguration<User>
@@ -376,11 +380,11 @@ namespace EphIt.Db.Models
         public void Configure(EntityTypeBuilder<VRBACScript> builder)
         {
             builder.ToView("v_RBACScript");
-            /*builder.HasOne(p => p.Script)
+            builder.HasOne(p => p.Script)
                 .WithMany(many => many.ScriptRoles)
                 .HasForeignKey(key => key.ScriptId)
-                .HasPrincipalKey(pkey => pkey.ScriptId);*/
-            builder.HasQueryFilter(filter => filter.RoleId == 555);
+                .HasPrincipalKey(pkey => pkey.ScriptId);
+            //builder.HasQueryFilter(filter => filter.RoleId == 555);
         }
     }
     public class VRBACScriptToObjectIdConfiguration : IEntityTypeConfiguration<VRBACScriptToObjectId>
@@ -394,10 +398,10 @@ namespace EphIt.Db.Models
         {
             builder.HasKey("ScriptId", "RoleId", "UserGroupId");
             builder.ToView("v_RBACScriptToObjectId");
-            /*builder.HasOne(p => p.Script)
+            builder.HasOne(p => p.Script)
                 .WithMany(many => many.ScriptObjectIds)
                 .HasForeignKey(key => key.ScriptId)
-                .HasPrincipalKey(pkey => pkey.ScriptId);*/
+                .HasPrincipalKey(pkey => pkey.ScriptId);
             builder.HasQueryFilter(p => _context.GetUserObjectIds().Contains(p.ObjectId));
         }
     }
@@ -412,10 +416,10 @@ namespace EphIt.Db.Models
         {
             builder.HasKey("ScriptVersionId", "RoleId", "UserGroupId");
             builder.ToView("v_RBACScriptVersionToObjectId");
-            /*builder.HasOne(p => p.ScriptVersion)
+            builder.HasOne(p => p.ScriptVersion)
                 .WithMany(many => many.ScriptVersionObjectIds)
                 .HasForeignKey(key => key.ScriptVersionId)
-                .HasPrincipalKey(pkey => pkey.ScriptVersionId);*/
+                .HasPrincipalKey(pkey => pkey.ScriptVersionId);
             builder.HasQueryFilter(p => _context.GetUserObjectIds().Contains(p.ObjectId));
         }
     }
