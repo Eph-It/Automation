@@ -42,6 +42,9 @@ namespace EphIt.BL.Script
                 .ToList()
                 .FirstOrDefault();
             var script = await query.FirstOrDefaultAsync();
+            if(script == null) {
+                return null;
+            }
             script.NewestVersion = newestVer;
             return script;
         }
